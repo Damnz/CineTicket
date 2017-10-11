@@ -28,6 +28,7 @@ public class Launcher extends javax.swing.JFrame {
         initComponents();
         conexion();
         actualizaFilm();
+        actualizaSala();
     }
 
     /**
@@ -78,14 +79,14 @@ public class Launcher extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jTextFieldNumeroSala = new javax.swing.JTextField();
+        jTextFieldCupoSala = new javax.swing.JTextField();
+        jComboBoxTipoSala = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        jTableSala = new javax.swing.JTable();
+        jButtonInsertarSala = new javax.swing.JButton();
+        jButtonModificarSala = new javax.swing.JButton();
+        jButtonEliminarSala = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1200, 800));
@@ -366,9 +367,9 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel5.setText("Tipo:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxTipoSala.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Normal", "3D", "4D"}));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jTableSala.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -379,13 +380,23 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jTableSala.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableSalaMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTableSala);
 
-        jButton4.setText("Insertar");
+        jButtonInsertarSala.setText("Insertar");
+        jButtonInsertarSala.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInsertarSalaActionPerformed(evt);
+            }
+        });
 
-        jButton5.setText("Modificar");
+        jButtonModificarSala.setText("Modificar");
 
-        jButton6.setText("Eliminar");
+        jButtonEliminarSala.setText("Eliminar");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -405,16 +416,16 @@ public class Launcher extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jTextFieldCupoSala, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextFieldNumeroSala, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
-                                .addComponent(jButton4)
+                                .addComponent(jButtonInsertarSala)
                                 .addGap(45, 45, 45)
-                                .addComponent(jButton5)
+                                .addComponent(jButtonModificarSala)
                                 .addGap(45, 45, 45)
-                                .addComponent(jButton6))
+                                .addComponent(jButtonEliminarSala))
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jComboBoxTipoSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(117, 117, 117))
         );
@@ -424,18 +435,18 @@ public class Launcher extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
+                    .addComponent(jTextFieldNumeroSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonInsertarSala)
+                    .addComponent(jButtonModificarSala)
+                    .addComponent(jButtonEliminarSala))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldCupoSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxTipoSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99))
@@ -465,7 +476,7 @@ public class Launcher extends javax.swing.JFrame {
         */
         try{
             String renglon[][] = {};
-            String columna[] = {"Id_film","nombre_film","duracion"};
+            String columna[] = {"id_film","nombre_film","duracion"};
             String query="SELECT * FROM Funciones.T_Film";
             model = new DefaultTableModel(renglon,columna);
             jTableFilm.setModel(model);
@@ -476,6 +487,33 @@ public class Launcher extends javax.swing.JFrame {
                 tuplas[0] = rs.getObject("id_film");
                 tuplas[1] = rs.getObject("nombre_film");
                 tuplas[2] = rs.getObject("duracion");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos");
+        }
+    }
+    
+    private void actualizaSala(){
+        /*
+        Actualiza la tabla
+        */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"id_sala","num_sala","capacidad", "tipo_sala"};
+            String query = "SELECT * FROM Funciones.T_Sala";
+            model = new DefaultTableModel(renglon,columna);
+            jTableSala.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[4];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_sala");
+                tuplas[1] = rs.getObject("num_sala");
+                tuplas[2] = rs.getObject("capacidad");
+                tuplas[3] = rs.getObject("tipo_sala");
                 model.addRow(tuplas);
                 System.out.println(model.getRowCount());
             }
@@ -576,6 +614,36 @@ public class Launcher extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminaFilmActionPerformed
 
+    private void jTableSalaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableSalaMouseClicked
+        // TODO add your handling code here:
+        jTextFieldNumeroSala.setText(jTableSala.getValueAt(jTableSala.getSelectedRow(), 1).toString());
+        jTextFieldCupoSala.setText(jTableSala.getValueAt(jTableSala.getSelectedRow(), 2).toString());
+        //jComboBoxTipoSala.setSelectedIndex(WIDTH);
+    }//GEN-LAST:event_jTableSalaMouseClicked
+
+    private void jButtonInsertarSalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertarSalaActionPerformed
+        /*
+        *Inserta tupla en la tabla Sala
+        */
+        try
+        {
+            st=cn.createStatement();
+            int num_sala = Integer.parseInt(jTextFieldNumeroSala.getText());
+            int cupo = Integer.parseInt(jTextFieldCupoSala.getText());
+            String tipo = jComboBoxTipoSala.getSelectedItem().toString();
+            String query = "INSERT INTO Funciones.T_Sala(num_sala,capacidad,tipo_sala) VALUES("+ num_sala + "," + cupo + ",'" + tipo +"')";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaSala();
+            jTextFieldNumeroSala.setText("");
+            jTextFieldCupoSala.setText("");
+            System.out.println("Tupla insertada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al insertar");
+        }
+    }//GEN-LAST:event_jButtonInsertarSalaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -615,19 +683,19 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonEliminaFilm;
+    private javax.swing.JButton jButtonEliminarSala;
     private javax.swing.JButton jButtonInsertaFilm;
+    private javax.swing.JButton jButtonInsertarSala;
     private javax.swing.JButton jButtonModificaFilm;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton jButtonModificarSala;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JComboBox<String> jComboBoxTipoSala;
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -650,14 +718,14 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTable jTableFilm;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTable jTableSala;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextFieldCupoSala;
     private javax.swing.JTextField jTextFieldDuracionFilm;
     private javax.swing.JTextField jTextFieldNombreFilm;
+    private javax.swing.JTextField jTextFieldNumeroSala;
     // End of variables declaration//GEN-END:variables
 }
