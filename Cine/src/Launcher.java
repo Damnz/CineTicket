@@ -1,3 +1,10 @@
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,12 +16,18 @@
  * @author josue
  */
 public class Launcher extends javax.swing.JFrame {
-
+    
     /**
      * Creates new form Launcher
      */
+    private Connection cn=null;
+    private ResultSet rs=null;
+    private Statement st=null;
+    private DefaultTableModel model;
     public Launcher() {
         initComponents();
+        conexion();
+        actualizaFilm();
     }
 
     /**
@@ -42,25 +55,25 @@ public class Launcher extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        jTextFieldNombreFilm = new javax.swing.JTextField();
+        jTextFieldDuracionFilm = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jTableFilm = new javax.swing.JTable();
+        jButtonInsertaFilm = new javax.swing.JButton();
+        jButtonModificaFilm = new javax.swing.JButton();
+        jButtonEliminaFilm = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
-        jTextField5 = new javax.swing.JTextField();
         jTextField6 = new javax.swing.JTextField();
         jComboBox2 = new javax.swing.JComboBox<>();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -184,7 +197,7 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel2.setText("Duración:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableFilm.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -195,13 +208,33 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jTableFilm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFilmMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableFilm);
 
-        jButton1.setText("Insertar");
+        jButtonInsertaFilm.setText("Insertar");
+        jButtonInsertaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInsertaFilmActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Modificar");
+        jButtonModificaFilm.setText("Modificar");
+        jButtonModificaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificaFilmActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Eliminar");
+        jButtonEliminaFilm.setText("Eliminar");
+        jButtonEliminaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminaFilmActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -217,14 +250,14 @@ public class Launcher extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                            .addComponent(jTextField1))
+                            .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNombreFilm))
                         .addGap(31, 31, 31)
-                        .addComponent(jButton1)
+                        .addComponent(jButtonInsertaFilm)
                         .addGap(45, 45, 45)
-                        .addComponent(jButton2)
+                        .addComponent(jButtonModificaFilm)
                         .addGap(45, 45, 45)
-                        .addComponent(jButton3)))
+                        .addComponent(jButtonEliminaFilm)))
                 .addGap(117, 117, 117))
         );
         jPanel5Layout.setVerticalGroup(
@@ -233,14 +266,14 @@ public class Launcher extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jTextFieldNombreFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonInsertaFilm)
+                    .addComponent(jButtonModificaFilm)
+                    .addComponent(jButtonEliminaFilm))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99))
@@ -290,9 +323,7 @@ public class Launcher extends javax.swing.JFrame {
                             .addComponent(jLabel6))
                         .addGap(31, 31, 31)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(131, 131, 131)
@@ -300,7 +331,8 @@ public class Launcher extends javax.swing.JFrame {
                                 .addGap(45, 45, 45)
                                 .addComponent(jButton8)
                                 .addGap(45, 45, 45)
-                                .addComponent(jButton9)))))
+                                .addComponent(jButton9))
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -314,9 +346,9 @@ public class Launcher extends javax.swing.JFrame {
                     .addComponent(jButton8)
                     .addComponent(jButton9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -427,6 +459,123 @@ public class Launcher extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void actualizaFilm(){
+        /*
+        Actualiza la tabla
+        */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"Id_film","nombre_film","duracion"};
+            String query="SELECT * FROM Funciones.T_Film";
+            model = new DefaultTableModel(renglon,columna);
+            jTableFilm.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[3];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_film");
+                tuplas[1] = rs.getObject("nombre_film");
+                tuplas[2] = rs.getObject("duracion");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos");
+        }
+    }
+    
+    private void conexion(){
+        try{
+            String url = "jdbc:postgresql://localhost:5432/Cinema";
+            String usuario = "postgres";
+            String password = "12345";
+            Class.forName("org.postgresql.Driver");
+            cn=DriverManager.getConnection(url,usuario,password);
+            st=cn.createStatement();
+            if(cn!=null)
+                System.out.println("Conexion establecida");
+            
+        }catch(Exception e)
+        {
+            System.out.println("Error de conexion");
+        }
+    }
+    
+    private void jButtonInsertaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaFilmActionPerformed
+        /*
+        *Inserta tupla en la tabla Film
+        */
+        try
+        {
+            st=cn.createStatement();
+            String nomFilm = jTextFieldNombreFilm.getText();
+            int duracion = Integer.parseInt(jTextFieldDuracionFilm.getText());
+            String query = "INSERT INTO Funciones.T_Film(nombre_film,duracion) VALUES('" + nomFilm + "'," + duracion + ")";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaFilm();
+            jTextFieldNombreFilm.setText("");
+            jTextFieldDuracionFilm.setText("");
+            System.out.println("Tupla insertada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al insertar");
+        }
+    }//GEN-LAST:event_jButtonInsertaFilmActionPerformed
+
+    private void jTableFilmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableFilmMouseClicked
+        // TODO add your handling code here:
+        jTextFieldNombreFilm.setText(jTableFilm.getValueAt(jTableFilm.getSelectedRow(), 1).toString());
+        jTextFieldDuracionFilm.setText(jTableFilm.getValueAt(jTableFilm.getSelectedRow(), 2).toString());
+    }//GEN-LAST:event_jTableFilmMouseClicked
+
+    private void jButtonModificaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificaFilmActionPerformed
+        /*
+        Modifica la tabla T_Film
+        */
+        try
+        {
+            int id_film = Integer.parseInt(jTableFilm.getValueAt(jTableFilm.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            String nomFilm = jTextFieldNombreFilm.getText();
+            int duracion = Integer.parseInt(jTextFieldDuracionFilm.getText());
+            String query = "UPDATE Funciones.T_Film SET nombre_film='" + nomFilm + "', duracion=" + duracion + "  WHERE id_film=" + id_film + ";";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaFilm();
+            jTextFieldNombreFilm.setText("");
+            jTextFieldDuracionFilm.setText("");
+            System.out.println("Tupla modificada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al modificar");
+        }
+    }//GEN-LAST:event_jButtonModificaFilmActionPerformed
+
+    private void jButtonEliminaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminaFilmActionPerformed
+        /*
+        Elimina una tupla de la tabla T_Film
+        */
+        try
+        {
+            int id_film = Integer.parseInt(jTableFilm.getValueAt(jTableFilm.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            String nomFilm = jTextFieldNombreFilm.getText();
+            int duracion = Integer.parseInt(jTextFieldDuracionFilm.getText());
+            String query = "DELETE FROM Funciones.T_Film WHERE id_film=" + id_film + ";";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaFilm();
+            jTextFieldNombreFilm.setText("");
+            jTextFieldDuracionFilm.setText("");
+            System.out.println("Tupla eliminada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al eliminar");
+        }
+    }//GEN-LAST:event_jButtonEliminaFilmActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -463,22 +612,23 @@ public class Launcher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JButton jButtonEliminaFilm;
+    private javax.swing.JButton jButtonInsertaFilm;
+    private javax.swing.JButton jButtonModificaFilm;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -500,15 +650,14 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTable jTableFilm;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextFieldDuracionFilm;
+    private javax.swing.JTextField jTextFieldNombreFilm;
     // End of variables declaration//GEN-END:variables
 }
