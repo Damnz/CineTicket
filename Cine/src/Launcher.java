@@ -395,8 +395,18 @@ public class Launcher extends javax.swing.JFrame {
         });
 
         jButtonModificarSala.setText("Modificar");
+        jButtonModificarSala.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificarSalaActionPerformed(evt);
+            }
+        });
 
         jButtonEliminarSala.setText("Eliminar");
+        jButtonEliminarSala.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarSalaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -599,8 +609,6 @@ public class Launcher extends javax.swing.JFrame {
         {
             int id_film = Integer.parseInt(jTableFilm.getValueAt(jTableFilm.getSelectedRow(), 0).toString());
             st=cn.createStatement();
-            String nomFilm = jTextFieldNombreFilm.getText();
-            int duracion = Integer.parseInt(jTextFieldDuracionFilm.getText());
             String query = "DELETE FROM Funciones.T_Film WHERE id_film=" + id_film + ";";
             st.executeUpdate(query);
             //cn.commit();
@@ -618,7 +626,8 @@ public class Launcher extends javax.swing.JFrame {
         // TODO add your handling code here:
         jTextFieldNumeroSala.setText(jTableSala.getValueAt(jTableSala.getSelectedRow(), 1).toString());
         jTextFieldCupoSala.setText(jTableSala.getValueAt(jTableSala.getSelectedRow(), 2).toString());
-        //jComboBoxTipoSala.setSelectedIndex(WIDTH);
+        
+        jComboBoxTipoSala.setSelectedItem(jTableSala.getValueAt(jTableSala.getSelectedRow(), 3).toString());
     }//GEN-LAST:event_jTableSalaMouseClicked
 
     private void jButtonInsertarSalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertarSalaActionPerformed
@@ -643,6 +652,51 @@ public class Launcher extends javax.swing.JFrame {
             System.out.println("Error al insertar");
         }
     }//GEN-LAST:event_jButtonInsertarSalaActionPerformed
+
+    private void jButtonModificarSalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificarSalaActionPerformed
+        /*
+        Modifica la tabla T_Sala
+        */
+        try
+        {
+            int id_sala = Integer.parseInt(jTableSala.getValueAt(jTableSala.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            int num_sala = Integer.parseInt(jTextFieldNumeroSala.getText());
+            int capacidad = Integer.parseInt(jTextFieldCupoSala.getText());
+            String tipo_sala = jComboBoxTipoSala.getSelectedItem().toString();
+            String query = "UPDATE Funciones.T_Sala SET num_sala=" + num_sala + ", capacidad=" + capacidad + ", tipo_sala='" + tipo_sala +"'  WHERE id_sala=" + id_sala + ";";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaSala();
+            jTextFieldNumeroSala.setText("");
+            jTextFieldCupoSala.setText("");
+            System.out.println("Tupla modificada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al modificar");
+        }
+    }//GEN-LAST:event_jButtonModificarSalaActionPerformed
+
+    private void jButtonEliminarSalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarSalaActionPerformed
+        /*
+        Elimina una tupla de la tabla T_Sala
+        */
+        try
+        {
+            int id_sala = Integer.parseInt(jTableSala.getValueAt(jTableSala.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            String query = "DELETE FROM Funciones.T_Sala WHERE id_sala=" + id_sala + ";";
+            st.executeUpdate(query);
+            //cn.commit();
+            actualizaSala();
+            jTextFieldNumeroSala.setText("");
+            jTextFieldCupoSala.setText("");
+            System.out.println("Tupla eliminada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al eliminar");
+        }
+    }//GEN-LAST:event_jButtonEliminarSalaActionPerformed
 
     /**
      * @param args the command line arguments
