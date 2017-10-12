@@ -3,6 +3,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -29,6 +37,30 @@ public class Launcher extends javax.swing.JFrame {
         conexion();
         actualizaFilm();
         actualizaSala();
+        actualizaHorario();
+        /*
+        Detecta un cambio de pestaña y ejecuta una accion
+        */
+        jTabbedPane1.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+            System.out.println(""+jTabbedPane1.getSelectedIndex());
+            if(jTabbedPane1.getSelectedIndex()==4) //Index starts at 0, so Index 2 = Tab3
+            {
+                try{     
+                    st=cn.createStatement();
+                    st.executeQuery("SELECT id_film FROM Funciones.T_Film ORDER BY id_film");
+                    rs = st.getResultSet();
+                    jComboBoxNombreHorario.removeAllItems();
+                    while(rs.next()){
+                       String c = rs.getString("id_film");
+                       jComboBoxNombreHorario.addItem(c);
+                    }
+                }catch(Exception err){
+                    System.out.println(err);
+                }
+            }
+        }
+        });
     }
 
     /**
@@ -68,13 +100,13 @@ public class Launcher extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jTextField6 = new javax.swing.JTextField();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jTableHorario = new javax.swing.JTable();
+        jTextFieldHoraHorario = new javax.swing.JTextField();
+        jComboBoxNombreHorario = new javax.swing.JComboBox<>();
+        jButtonInsertaHorario = new javax.swing.JButton();
+        jButtonModificaHorario = new javax.swing.JButton();
+        jButtonEliminaHorario = new javax.swing.JButton();
+        jDateChooserHorario = new com.toedter.calendar.JDateChooser();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -92,6 +124,11 @@ public class Launcher extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(1200, 800));
 
         jTabbedPane1.setToolTipText("");
+        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTabbedPane1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -282,13 +319,19 @@ public class Launcher extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Film", jPanel5);
 
+        jPanel6.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jPanel6FocusGained(evt);
+            }
+        });
+
         jLabel6.setText("Nombre:");
 
         jLabel7.setText("Fecha:");
 
         jLabel8.setText("Hora:");
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        jTableHorario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -299,15 +342,35 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane3.setViewportView(jTable3);
+        jTableHorario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableHorarioMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTableHorario);
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxNombreHorario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
 
-        jButton7.setText("Insertar");
+        jButtonInsertaHorario.setText("Insertar");
+        jButtonInsertaHorario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInsertaHorarioActionPerformed(evt);
+            }
+        });
 
-        jButton8.setText("Modificar");
+        jButtonModificaHorario.setText("Modificar");
+        jButtonModificaHorario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificaHorarioActionPerformed(evt);
+            }
+        });
 
-        jButton9.setText("Eliminar");
+        jButtonEliminaHorario.setText("Eliminar");
+        jButtonEliminaHorario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminaHorarioActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -324,16 +387,16 @@ public class Launcher extends javax.swing.JFrame {
                             .addComponent(jLabel6))
                         .addGap(31, 31, 31)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldHoraHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jComboBoxNombreHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(131, 131, 131)
-                                .addComponent(jButton7)
+                                .addComponent(jButtonInsertaHorario)
                                 .addGap(45, 45, 45)
-                                .addComponent(jButton8)
+                                .addComponent(jButtonModificaHorario)
                                 .addGap(45, 45, 45)
-                                .addComponent(jButton9))
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jButtonEliminaHorario))
+                            .addComponent(jDateChooserHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -342,18 +405,18 @@ public class Launcher extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7)
-                    .addComponent(jButton8)
-                    .addComponent(jButton9))
+                    .addComponent(jComboBoxNombreHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonInsertaHorario)
+                    .addComponent(jButtonModificaHorario)
+                    .addComponent(jButtonEliminaHorario))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jDateChooserHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldHoraHorario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(102, Short.MAX_VALUE))
@@ -533,6 +596,33 @@ public class Launcher extends javax.swing.JFrame {
         }
     }
     
+        private void actualizaHorario(){
+        /*
+        Actualiza la tabla
+        */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"id_horario","id_film","hora", "fecha"};
+            String query = "SELECT * FROM Funciones.T_Horario";
+            model = new DefaultTableModel(renglon,columna);
+            jTableHorario.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[4];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_horario");
+                tuplas[1] = rs.getObject("id_film");
+                tuplas[2] = rs.getObject("hora");
+                tuplas[3] = rs.getObject("fecha");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos");
+        }
+    }
+    
     private void conexion(){
         try{
             String url = "jdbc:postgresql://localhost:5432/Cinema";
@@ -698,6 +788,92 @@ public class Launcher extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminarSalaActionPerformed
 
+    private void jTableHorarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorarioMouseClicked
+        jTextFieldHoraHorario.setText(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 2).toString());
+        jComboBoxNombreHorario.setSelectedItem(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 1).toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = sdf.format(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 3));
+        java.util.Date date;
+        try {
+            date = sdf.parse(fecha);
+            jDateChooserHorario.setDate(date);
+        } catch (ParseException ex) {
+            Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jTableHorarioMouseClicked
+
+    private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTabbedPane1MouseClicked
+
+    private void jPanel6FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jPanel6FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel6FocusGained
+
+    private void jButtonInsertaHorarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaHorarioActionPerformed
+        /*
+        *Inserta tupla en la tabla Horario
+        */
+        try
+        {
+            st=cn.createStatement();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fecha = sdf.format(jDateChooserHorario.getDate());
+            int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
+            String hora = jTextFieldHoraHorario.getText();
+            String query = "INSERT INTO Funciones.T_Horario(id_film, hora, fecha) VALUES("+ id_film + ",'" + hora + "','" + fecha +"')";
+            st.executeUpdate(query);
+            actualizaHorario();
+            jTextFieldHoraHorario.setText("");
+            System.out.println("Tupla insertada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al insertar");
+        }
+    }//GEN-LAST:event_jButtonInsertaHorarioActionPerformed
+
+    private void jButtonModificaHorarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificaHorarioActionPerformed
+        /*
+        Modifica tabla T_Horario
+        */
+        try
+        {
+            int id_horario = Integer.parseInt(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fecha = sdf.format(jDateChooserHorario.getDate());
+            int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
+            String hora = jTextFieldHoraHorario.getText();
+            String query = "UPDATE Funciones.T_Horario SET id_film="+ id_film + ",hora='" + hora + "',fecha='" + fecha +"' WHERE id_horario=" + id_horario;
+            st.executeUpdate(query);
+            actualizaHorario();
+            jTextFieldHoraHorario.setText("");
+            System.out.println("Tupla modificada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al modificar");
+        }
+    }//GEN-LAST:event_jButtonModificaHorarioActionPerformed
+
+    private void jButtonEliminaHorarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminaHorarioActionPerformed
+        /*
+        Elimina tabla T_Horario
+        */
+        try
+        {
+            int id_horario = Integer.parseInt(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 0).toString());
+            st=cn.createStatement();
+            String query = "DELETE FROM Funciones.T_Horario WHERE id_horario="+ id_horario;
+            st.executeUpdate(query);
+            actualizaHorario();
+            jTextFieldHoraHorario.setText("");
+            System.out.println("Tupla eliminada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al eliminar");
+        }
+    }//GEN-LAST:event_jButtonEliminaHorarioActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -731,26 +907,27 @@ public class Launcher extends javax.swing.JFrame {
                 new Launcher().setVisible(true);
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JButton jButtonEliminaFilm;
+    private javax.swing.JButton jButtonEliminaHorario;
     private javax.swing.JButton jButtonEliminarSala;
     private javax.swing.JButton jButtonInsertaFilm;
+    private javax.swing.JButton jButtonInsertaHorario;
     private javax.swing.JButton jButtonInsertarSala;
     private javax.swing.JButton jButtonModificaFilm;
+    private javax.swing.JButton jButtonModificaHorario;
     private javax.swing.JButton jButtonModificarSala;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JComboBox<String> jComboBoxNombreHorario;
     private javax.swing.JComboBox<String> jComboBoxTipoSala;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private com.toedter.calendar.JDateChooser jDateChooserHorario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -772,13 +949,13 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTable jTableFilm;
+    private javax.swing.JTable jTableHorario;
     private javax.swing.JTable jTableSala;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextFieldCupoSala;
     private javax.swing.JTextField jTextFieldDuracionFilm;
+    private javax.swing.JTextField jTextFieldHoraHorario;
     private javax.swing.JTextField jTextFieldNombreFilm;
     private javax.swing.JTextField jTextFieldNumeroSala;
     // End of variables declaration//GEN-END:variables
