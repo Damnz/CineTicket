@@ -38,6 +38,7 @@ public class Launcher extends javax.swing.JFrame {
         actualizaFilm();
         actualizaSala();
         actualizaHorario();
+        actualizaProyeccion();
         /*
         Detecta un cambio de pestaña y ejecuta una accion
         */
@@ -54,6 +55,28 @@ public class Launcher extends javax.swing.JFrame {
                     while(rs.next()){
                        String c = rs.getString("id_film");
                        jComboBoxNombreHorario.addItem(c);
+                    }
+                }catch(Exception err){
+                    System.out.println(err);
+                }
+            }
+            if(jTabbedPane1.getSelectedIndex()==2) //Index starts at 0, so Index 2 = Tab3
+            {
+                try{     
+                    st=cn.createStatement();
+                    st.executeQuery("SELECT id_sala FROM Funciones.T_Sala ORDER BY id_sala");
+                    rs = st.getResultSet();
+                    jComboBoxNumeroProyeccion.removeAllItems();
+                    while(rs.next()){
+                       String c = rs.getString("id_sala");
+                       jComboBoxNumeroProyeccion.addItem(c);
+                    }
+                    st.executeQuery("SELECT id_horario FROM Funciones.T_Horario ORDER BY id_horario");
+                    rs = st.getResultSet();
+                    jComboBoxHorarioProyeccion.removeAllItems();
+                    while(rs.next()){
+                       String c = rs.getString("id_horario");
+                       jComboBoxHorarioProyeccion.addItem(c);
                     }
                 }catch(Exception err){
                     System.out.println(err);
@@ -79,12 +102,12 @@ public class Launcher extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jComboBox4 = new javax.swing.JComboBox<>();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
+        jTableProyeccion = new javax.swing.JTable();
+        jComboBoxNumeroProyeccion = new javax.swing.JComboBox<>();
+        jComboBoxHorarioProyeccion = new javax.swing.JComboBox<>();
+        jButtonInsertaProyeccion = new javax.swing.JButton();
+        jButtonModificaProyeccion = new javax.swing.JButton();
+        jButtonEliminaProyeccion = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -161,7 +184,7 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel10.setText("Horarios:");
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+        jTableProyeccion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -172,17 +195,27 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane4.setViewportView(jTable4);
+        jTableProyeccion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableProyeccionMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(jTableProyeccion);
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxNumeroProyeccion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxHorarioProyeccion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
 
-        jButton10.setText("Insertar");
+        jButtonInsertaProyeccion.setText("Insertar");
+        jButtonInsertaProyeccion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInsertaProyeccionActionPerformed(evt);
+            }
+        });
 
-        jButton11.setText("Modificar");
+        jButtonModificaProyeccion.setText("Modificar");
 
-        jButton12.setText("Eliminar");
+        jButtonEliminaProyeccion.setText("Eliminar");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -197,17 +230,17 @@ public class Launcher extends javax.swing.JFrame {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addGap(31, 31, 31)
-                                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jComboBoxNumeroProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel10)
                                 .addGap(44, 44, 44)
-                                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jComboBoxHorarioProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton10)
+                        .addComponent(jButtonInsertaProyeccion)
                         .addGap(45, 45, 45)
-                        .addComponent(jButton11)
+                        .addComponent(jButtonModificaProyeccion)
                         .addGap(45, 45, 45)
-                        .addComponent(jButton12)))
+                        .addComponent(jButtonEliminaProyeccion)))
                 .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -216,14 +249,14 @@ public class Launcher extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton10)
-                    .addComponent(jButton11)
-                    .addComponent(jButton12))
+                    .addComponent(jComboBoxNumeroProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonInsertaProyeccion)
+                    .addComponent(jButtonModificaProyeccion)
+                    .addComponent(jButtonEliminaProyeccion))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxHorarioProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(147, Short.MAX_VALUE))
@@ -623,6 +656,33 @@ public class Launcher extends javax.swing.JFrame {
         }
     }
     
+    private void actualizaProyeccion(){
+        /*
+        Actualiza la tabla T_Proyeccion
+        */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"id_proyeccion", "id_sala", "id_horario", "asientos_disponibles"};
+            String query = "SELECT * FROM Funciones.T_Proyeccion";
+            model = new DefaultTableModel(renglon,columna);
+            jTableProyeccion.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[4];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_proyeccion");
+                tuplas[1] = rs.getObject("id_sala");
+                tuplas[2] = rs.getObject("id_horario");
+                tuplas[3] = rs.getObject("asientos_disponibles");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos");
+        }
+    }
+        
     private void conexion(){
         try{
             String url = "jdbc:postgresql://localhost:5432/Cinema";
@@ -874,6 +934,30 @@ public class Launcher extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminaHorarioActionPerformed
 
+    private void jButtonInsertaProyeccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaProyeccionActionPerformed
+        /*
+        *Inserta tupla en la tabla T_Proyeccion
+        */
+        try
+        {
+            st=cn.createStatement();
+            int id_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
+            int id_horario = Integer.parseInt(jComboBoxHorarioProyeccion.getSelectedItem().toString());
+            String query = "INSERT INTO Funciones.T_Proyeccion(id_sala, id_horario, asientos_disponibles) VALUES("+ id_sala + "," + id_horario + "," + 0 +")";
+            st.executeUpdate(query);
+            actualizaProyeccion();
+            System.out.println("Tupla insertada correctamente");
+        }catch(Exception e)
+        {
+            System.out.println("Error al insertar");
+        }
+    }//GEN-LAST:event_jButtonInsertaProyeccionActionPerformed
+
+    private void jTableProyeccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProyeccionMouseClicked
+        jComboBoxNumeroProyeccion.setSelectedItem(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 1).toString());
+        jComboBoxHorarioProyeccion.setSelectedItem(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 1).toString());
+    }//GEN-LAST:event_jTableProyeccionMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -911,21 +995,21 @@ public class Launcher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButtonEliminaFilm;
     private javax.swing.JButton jButtonEliminaHorario;
+    private javax.swing.JButton jButtonEliminaProyeccion;
     private javax.swing.JButton jButtonEliminarSala;
     private javax.swing.JButton jButtonInsertaFilm;
     private javax.swing.JButton jButtonInsertaHorario;
+    private javax.swing.JButton jButtonInsertaProyeccion;
     private javax.swing.JButton jButtonInsertarSala;
     private javax.swing.JButton jButtonModificaFilm;
     private javax.swing.JButton jButtonModificaHorario;
+    private javax.swing.JButton jButtonModificaProyeccion;
     private javax.swing.JButton jButtonModificarSala;
-    private javax.swing.JComboBox<String> jComboBox3;
-    private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JComboBox<String> jComboBoxHorarioProyeccion;
     private javax.swing.JComboBox<String> jComboBoxNombreHorario;
+    private javax.swing.JComboBox<String> jComboBoxNumeroProyeccion;
     private javax.swing.JComboBox<String> jComboBoxTipoSala;
     private com.toedter.calendar.JDateChooser jDateChooserHorario;
     private javax.swing.JLabel jLabel1;
@@ -949,9 +1033,9 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable4;
     private javax.swing.JTable jTableFilm;
     private javax.swing.JTable jTableHorario;
+    private javax.swing.JTable jTableProyeccion;
     private javax.swing.JTable jTableSala;
     private javax.swing.JTextField jTextFieldCupoSala;
     private javax.swing.JTextField jTextFieldDuracionFilm;
