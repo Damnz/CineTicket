@@ -1,0 +1,69 @@
+-- Database: Cinema
+
+-- DROP DATABASE "Cinema";
+
+CREATE DATABASE "Cinema"
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Spanish_Spain.1252'
+    LC_CTYPE = 'Spanish_Spain.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+CREATE SCHEMA Ventas;
+CREATE SCHEMA Funciones;
+
+CREATE TABLE Ventas.T_Venta(
+	id_venta BIGSERIAL NOT NULL,
+	hora TIME NOT NULL,
+	total FLOAT NOT NULL,
+	iva FLOAT NOT NULL,
+	CONSTRAINT PK_VENTA PRIMARY KEY(id_venta)
+);
+
+CREATE TABLE Funciones.T_Sala(
+	id_sala BIGSERIAL NOT NULL,
+	num_sala INT NOT NULL,
+	capacidad INT NOT NULL,
+	tipo_sala VARCHAR(10) NOT NULL,
+	CONSTRAINT PK_SALA PRIMARY KEY(id_sala)
+);
+
+CREATE TABLE Funciones.T_Film(
+	id_film BIGSERIAL NOT NULL,
+	nombre_film VARCHAR(60),
+	duracion INT NOT NULL,
+	CONSTRAINT PK_FILM PRIMARY KEY(id_film)
+);
+
+CREATE TABLE Funciones.T_Horario(
+	id_horario BIGSERIAL NOT NULL,
+	id_film INT8 NOT NULL,
+	hora TIME NOT NULL,
+	fecha DATE NOT NULL,
+	CONSTRAINT PK_HORARIO PRIMARY KEY(id_horario),
+	CONSTRAINT FK_FILM FOREIGN KEY(id_film) REFERENCES Funciones.T_Film(id_film)
+);
+
+CREATE TABLE Funciones.T_Proyeccion(
+	id_proyeccion BIGSERIAL NOT NULL,
+	id_sala INT8 NOT NULL,
+	id_horario INT8 NOT NULL,
+    asientos_disponibles int NOT NULL,
+	CONSTRAINT PK_PROYECCION PRIMARY KEY(id_proyeccion),
+	CONSTRAINT FK_SALA FOREIGN KEY(id_sala) REFERENCES Funciones.T_Sala(id_sala),
+	CONSTRAINT FK_HORARIO FOREIGN KEY(id_horario) REFERENCES Funciones.T_Horario(id_horario)
+);
+
+CREATE TABLE Ventas.T_DetalleVenta(
+	id_detalleVenta BIGSERIAL NOT NULL,
+	id_venta INT8 NOT NULL,
+	id_proyeccion INT8 NOT NULL,
+	tipo_boleto VARCHAR(12) NOT NULL,
+	asiento INT NOT NULL,
+	subtotal FLOAT NOT NULL,
+	CONSTRAINT PK_DETALLEVENTA PRIMARY KEY(id_detalleVenta),
+	CONSTRAINT FK_VENTA FOREIGN KEY(id_venta) REFERENCES Ventas.T_Venta(id_venta),
+	CONSTRAINT FK_PROYECCION FOREIGN KEY(id_proyeccion) REFERENCES Funciones.T_Proyeccion(id_proyeccion)
+);
