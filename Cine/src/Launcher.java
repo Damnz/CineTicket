@@ -31,9 +31,14 @@ public class Launcher extends javax.swing.JFrame {
     private Connection cn=null;
     private ResultSet rs=null;
     private Statement st=null;
+    final String user;
+    final String pass;
+    
     private DefaultTableModel model;
-    public Launcher() {
+    public Launcher(String user, String pass) {
         initComponents();
+        this.user = user;
+        this.pass = pass;
         conexion();
         actualizaFilm();
         actualizaSala();
@@ -429,7 +434,7 @@ public class Launcher extends javax.swing.JFrame {
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jTextFieldCupoSala, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTextFieldNumeroSala, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                                 .addComponent(jButtonInsertarSala)
                                 .addGap(45, 45, 45)
                                 .addComponent(jButtonModificarSala)
@@ -696,10 +701,8 @@ public class Launcher extends javax.swing.JFrame {
     private void conexion(){
         try{
             String url = "jdbc:postgresql://localhost:5432/Cinema";
-            String usuario = "postgres";
-            String password = "12345";
             Class.forName("org.postgresql.Driver");
-            cn=DriverManager.getConnection(url,usuario,password);
+            cn=DriverManager.getConnection(url,user,pass);
             st=cn.createStatement();
             if(cn!=null)
                 System.out.println("Conexion establecida");
@@ -1038,7 +1041,7 @@ public class Launcher extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Launcher().setVisible(true);
+                //new Launcher().setVisible(true);
             }
         });
         

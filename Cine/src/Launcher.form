@@ -398,7 +398,7 @@
                                           <Component id="jTextFieldCupoSala" min="-2" pref="114" max="-2" attributes="0"/>
                                           <Component id="jTextFieldNumeroSala" min="-2" pref="114" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace pref="52" max="32767" attributes="0"/>
+                                      <EmptySpace pref="90" max="32767" attributes="0"/>
                                       <Component id="jButtonInsertarSala" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                                       <Component id="jButtonModificarSala" min="-2" max="-2" attributes="0"/>
