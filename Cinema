@@ -30,12 +30,20 @@ CREATE TABLE Funciones.T_Sala(
 	CONSTRAINT PK_SALA PRIMARY KEY(id_sala)
 );
 
+ALTER TABLE Funciones.T_Sala
+add CONSTRAINT unica_sala
+unique (num_sala);
+
 CREATE TABLE Funciones.T_Film(
 	id_film BIGSERIAL NOT NULL,
 	nombre_film VARCHAR(60),
 	duracion INT NOT NULL,
 	CONSTRAINT PK_FILM PRIMARY KEY(id_film)
 );
+
+ALTER TABLE Funciones.T_Film
+add CONSTRAINT unico_film
+unique (nombre_film);
 
 CREATE TABLE Funciones.T_Horario(
 	id_horario BIGSERIAL NOT NULL,
