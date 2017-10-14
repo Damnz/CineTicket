@@ -102,7 +102,79 @@ public class Launcher extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        proyecciones = new javax.swing.JComboBox<>();
+        cantAdulto = new javax.swing.JSpinner();
+        cantNino = new javax.swing.JSpinner();
+        cantEspecial = new javax.swing.JSpinner();
+        jSeparator1 = new javax.swing.JSeparator();
+        totalBoletos = new javax.swing.JLabel();
+        aceptar = new javax.swing.JButton();
+        totalVenta = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jCheckBox6 = new javax.swing.JCheckBox();
+        jCheckBox7 = new javax.swing.JCheckBox();
+        jCheckBox8 = new javax.swing.JCheckBox();
+        jCheckBox9 = new javax.swing.JCheckBox();
+        jCheckBox10 = new javax.swing.JCheckBox();
+        jCheckBox11 = new javax.swing.JCheckBox();
+        jCheckBox12 = new javax.swing.JCheckBox();
+        jCheckBox13 = new javax.swing.JCheckBox();
+        jCheckBox14 = new javax.swing.JCheckBox();
+        jCheckBox15 = new javax.swing.JCheckBox();
+        jCheckBox16 = new javax.swing.JCheckBox();
+        jCheckBox17 = new javax.swing.JCheckBox();
+        jCheckBox18 = new javax.swing.JCheckBox();
+        jCheckBox19 = new javax.swing.JCheckBox();
+        jCheckBox20 = new javax.swing.JCheckBox();
+        jCheckBox21 = new javax.swing.JCheckBox();
+        jCheckBox22 = new javax.swing.JCheckBox();
+        jCheckBox23 = new javax.swing.JCheckBox();
+        jCheckBox24 = new javax.swing.JCheckBox();
+        jCheckBox25 = new javax.swing.JCheckBox();
+        jCheckBox26 = new javax.swing.JCheckBox();
+        jCheckBox27 = new javax.swing.JCheckBox();
+        jCheckBox28 = new javax.swing.JCheckBox();
+        jCheckBox29 = new javax.swing.JCheckBox();
+        jCheckBox30 = new javax.swing.JCheckBox();
+        jCheckBox31 = new javax.swing.JCheckBox();
+        jCheckBox32 = new javax.swing.JCheckBox();
+        jCheckBox33 = new javax.swing.JCheckBox();
+        jCheckBox34 = new javax.swing.JCheckBox();
+        jCheckBox35 = new javax.swing.JCheckBox();
+        jCheckBox36 = new javax.swing.JCheckBox();
+        jCheckBox37 = new javax.swing.JCheckBox();
+        jCheckBox38 = new javax.swing.JCheckBox();
+        jCheckBox39 = new javax.swing.JCheckBox();
+        jCheckBox40 = new javax.swing.JCheckBox();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTableHorario1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTableHorario2 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -158,29 +230,205 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 791, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 597, Short.MAX_VALUE)
-        );
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel11.setText("Proyeccion:");
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 43, -1, -1));
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel12.setText("Cantidad Boletos:");
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 79, -1, -1));
+
+        jLabel13.setText("Adulto:");
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 115, -1, -1));
+
+        jLabel14.setText("Niño:");
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 141, -1, -1));
+
+        jLabel15.setText("Especial:");
+        jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 167, -1, -1));
+
+        jPanel1.add(proyecciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(137, 41, 144, -1));
+
+        cantAdulto.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
+        jPanel1.add(cantAdulto, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 112, 71, -1));
+
+        cantNino.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
+        jPanel1.add(cantNino, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 138, 71, -1));
+
+        cantEspecial.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
+        jPanel1.add(cantEspecial, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 164, 71, -1));
+        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 202, 280, 10));
+
+        totalBoletos.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        totalBoletos.setText("0");
+        jPanel1.add(totalBoletos, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 79, -1, -1));
+
+        aceptar.setText("Aceptar");
+        jPanel1.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(229, 258, 100, -1));
+
+        totalVenta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        totalVenta.setText("0.00");
+        jPanel1.add(totalVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(124, 223, -1, -1));
+        jPanel1.add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 41, -1, -1));
+        jPanel1.add(jCheckBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 41, -1, -1));
+        jPanel1.add(jCheckBox3, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 41, -1, -1));
+        jPanel1.add(jCheckBox4, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 41, -1, -1));
+        jPanel1.add(jCheckBox5, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 41, -1, -1));
+        jPanel1.add(jCheckBox6, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 41, -1, -1));
+        jPanel1.add(jCheckBox7, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 41, -1, -1));
+        jPanel1.add(jCheckBox8, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 74, -1, -1));
+        jPanel1.add(jCheckBox9, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 74, -1, -1));
+        jPanel1.add(jCheckBox10, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 74, -1, -1));
+        jPanel1.add(jCheckBox11, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 74, -1, -1));
+        jPanel1.add(jCheckBox12, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 74, -1, -1));
+        jPanel1.add(jCheckBox13, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 74, -1, -1));
+        jPanel1.add(jCheckBox14, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 74, -1, -1));
+        jPanel1.add(jCheckBox15, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 111, -1, -1));
+        jPanel1.add(jCheckBox16, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 111, -1, -1));
+        jPanel1.add(jCheckBox17, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 111, -1, -1));
+        jPanel1.add(jCheckBox18, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 111, -1, -1));
+        jPanel1.add(jCheckBox19, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 111, -1, -1));
+        jPanel1.add(jCheckBox20, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 111, -1, -1));
+        jPanel1.add(jCheckBox21, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 111, -1, -1));
+        jPanel1.add(jCheckBox22, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
+        jPanel1.add(jCheckBox23, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 150, -1, -1));
+        jPanel1.add(jCheckBox24, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 150, -1, -1));
+        jPanel1.add(jCheckBox25, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 150, -1, -1));
+        jPanel1.add(jCheckBox26, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 150, -1, -1));
+        jPanel1.add(jCheckBox27, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 150, -1, -1));
+        jPanel1.add(jCheckBox28, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 150, -1, -1));
+        jPanel1.add(jCheckBox29, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 189, -1, -1));
+        jPanel1.add(jCheckBox30, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 189, -1, -1));
+        jPanel1.add(jCheckBox31, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 189, -1, -1));
+        jPanel1.add(jCheckBox32, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 189, -1, -1));
+        jPanel1.add(jCheckBox33, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 189, -1, -1));
+        jPanel1.add(jCheckBox34, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 189, -1, -1));
+        jPanel1.add(jCheckBox35, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 189, -1, -1));
+        jPanel1.add(jCheckBox36, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 228, -1, -1));
+        jPanel1.add(jCheckBox37, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 228, -1, -1));
+        jPanel1.add(jCheckBox38, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 228, -1, -1));
+        jPanel1.add(jCheckBox39, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 228, -1, -1));
+        jPanel1.add(jCheckBox40, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 228, -1, -1));
+
+        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel16.setText("7");
+        jPanel1.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(651, 25, 10, -1));
+        jLabel16.getAccessibleContext().setAccessibleDescription("");
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel18.setText("E");
+        jPanel1.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 80, -1, -1));
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel19.setText("D");
+        jPanel1.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 115, -1, -1));
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel20.setText("C");
+        jPanel1.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 152, -1, -1));
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel21.setText("B");
+        jPanel1.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 191, -1, -1));
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel22.setText("A");
+        jPanel1.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(479, 228, -1, -1));
+
+        jLabel23.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel23.setText("F");
+        jPanel1.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(481, 43, -1, -1));
+
+        jLabel24.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel24.setText("F");
+        jPanel1.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(481, 43, -1, -1));
+
+        jLabel25.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel25.setText("1");
+        jPanel1.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(513, 25, -1, -1));
+
+        jLabel26.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel26.setText("2");
+        jPanel1.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(536, 25, 10, -1));
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel27.setText("3");
+        jPanel1.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 25, 10, -1));
+
+        jLabel28.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel28.setText("4");
+        jPanel1.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(582, 25, 10, -1));
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel29.setText("5");
+        jPanel1.add(jLabel29, new org.netbeans.lib.awtextra.AbsoluteConstraints(605, 25, 10, -1));
+
+        jLabel30.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel30.setText("6");
+        jPanel1.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(628, 25, 10, -1));
+
+        jLabel31.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel31.setText("TOTAL:  $");
+        jPanel1.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 223, -1, -1));
+
+        jTableHorario1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableHorario1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableHorario1MouseClicked(evt);
+            }
+        });
+        jScrollPane5.setViewportView(jTableHorario1);
+
+        jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 740, 190));
 
         jTabbedPane1.addTab("Detalle de venta", jPanel1);
         jPanel1.getAccessibleContext().setAccessibleName("");
+
+        jTableHorario2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableHorario2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableHorario2MouseClicked(evt);
+            }
+        });
+        jScrollPane6.setViewportView(jTableHorario2);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 791, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 597, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(138, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Venta", jPanel2);
@@ -274,7 +522,7 @@ public class Launcher extends javax.swing.JFrame {
                     .addComponent(jComboBoxHorarioProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Proyección", jPanel3);
@@ -360,7 +608,7 @@ public class Launcher extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99))
         );
@@ -1011,6 +1259,14 @@ public class Launcher extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminaProyeccionActionPerformed
 
+    private void jTableHorario1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorario1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTableHorario1MouseClicked
+
+    private void jTableHorario2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorario2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTableHorario2MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -1048,6 +1304,10 @@ public class Launcher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aceptar;
+    private javax.swing.JSpinner cantAdulto;
+    private javax.swing.JSpinner cantEspecial;
+    private javax.swing.JSpinner cantNino;
     private javax.swing.JButton jButtonEliminaFilm;
     private javax.swing.JButton jButtonEliminaHorario;
     private javax.swing.JButton jButtonEliminaProyeccion;
@@ -1060,6 +1320,46 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JButton jButtonModificaHorario;
     private javax.swing.JButton jButtonModificaProyeccion;
     private javax.swing.JButton jButtonModificarSala;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox10;
+    private javax.swing.JCheckBox jCheckBox11;
+    private javax.swing.JCheckBox jCheckBox12;
+    private javax.swing.JCheckBox jCheckBox13;
+    private javax.swing.JCheckBox jCheckBox14;
+    private javax.swing.JCheckBox jCheckBox15;
+    private javax.swing.JCheckBox jCheckBox16;
+    private javax.swing.JCheckBox jCheckBox17;
+    private javax.swing.JCheckBox jCheckBox18;
+    private javax.swing.JCheckBox jCheckBox19;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox20;
+    private javax.swing.JCheckBox jCheckBox21;
+    private javax.swing.JCheckBox jCheckBox22;
+    private javax.swing.JCheckBox jCheckBox23;
+    private javax.swing.JCheckBox jCheckBox24;
+    private javax.swing.JCheckBox jCheckBox25;
+    private javax.swing.JCheckBox jCheckBox26;
+    private javax.swing.JCheckBox jCheckBox27;
+    private javax.swing.JCheckBox jCheckBox28;
+    private javax.swing.JCheckBox jCheckBox29;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox30;
+    private javax.swing.JCheckBox jCheckBox31;
+    private javax.swing.JCheckBox jCheckBox32;
+    private javax.swing.JCheckBox jCheckBox33;
+    private javax.swing.JCheckBox jCheckBox34;
+    private javax.swing.JCheckBox jCheckBox35;
+    private javax.swing.JCheckBox jCheckBox36;
+    private javax.swing.JCheckBox jCheckBox37;
+    private javax.swing.JCheckBox jCheckBox38;
+    private javax.swing.JCheckBox jCheckBox39;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox40;
+    private javax.swing.JCheckBox jCheckBox5;
+    private javax.swing.JCheckBox jCheckBox6;
+    private javax.swing.JCheckBox jCheckBox7;
+    private javax.swing.JCheckBox jCheckBox8;
+    private javax.swing.JCheckBox jCheckBox9;
     private javax.swing.JComboBox<String> jComboBoxHorarioProyeccion;
     private javax.swing.JComboBox<String> jComboBoxNombreHorario;
     private javax.swing.JComboBox<String> jComboBoxNumeroProyeccion;
@@ -1067,8 +1367,28 @@ public class Launcher extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser jDateChooserHorario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1085,9 +1405,14 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTableFilm;
     private javax.swing.JTable jTableHorario;
+    private javax.swing.JTable jTableHorario1;
+    private javax.swing.JTable jTableHorario2;
     private javax.swing.JTable jTableProyeccion;
     private javax.swing.JTable jTableSala;
     private javax.swing.JTextField jTextFieldCupoSala;
@@ -1095,5 +1420,8 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldHoraHorario;
     private javax.swing.JTextField jTextFieldNombreFilm;
     private javax.swing.JTextField jTextFieldNumeroSala;
+    private javax.swing.JComboBox<String> proyecciones;
+    private javax.swing.JLabel totalBoletos;
+    private javax.swing.JLabel totalVenta;
     // End of variables declaration//GEN-END:variables
 }
