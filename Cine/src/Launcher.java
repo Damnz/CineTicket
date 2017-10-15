@@ -1,4 +1,5 @@
 
+import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author josue
  */
+    
 public class Launcher extends javax.swing.JFrame {
     
     /**
@@ -33,10 +35,36 @@ public class Launcher extends javax.swing.JFrame {
     private Statement st=null;
     final String user;
     final String pass;
-    
+    private int cantBoletos;
+    private double totalVen;
+    final double precioAdulto = 60;
+    final double precioNino = 40;
+    final double porcDescuento = 0.30;
+    private boolean[] asientos = new boolean[40];
+    private String selectProyec;
+
+    ChangeListener listenerSpinner = new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        cantBoletos = (Integer)cantAdulto.getValue() + (Integer)cantNino.getValue() + (Integer)cantEspecial.getValue();
+        totalBoletos.setText(String.valueOf(cantBoletos));
+        totalVen =    ((Integer)cantAdulto.getValue() * precioAdulto) + 
+                        ((Integer)cantNino.getValue() * precioNino) +
+                        ((Integer)cantEspecial.getValue() * (precioAdulto * porcDescuento));
+        totalVenta.setText(String.valueOf(totalVen));
+        if(cantBoletos > 0)
+            panelAsientos.setVisible(false);
+        else
+            panelAsientos.setVisible(true);
+      }
+    };
+   
     private DefaultTableModel model;
     public Launcher(String user, String pass) {
         initComponents();
+        cantAdulto.addChangeListener(listenerSpinner);
+        cantNino.addChangeListener(listenerSpinner);
+        cantEspecial.addChangeListener(listenerSpinner);
+       
         this.user = user;
         this.pass = pass;
         conexion();
@@ -44,8 +72,23 @@ public class Launcher extends javax.swing.JFrame {
         actualizaSala();
         actualizaHorario();
         actualizaProyeccion();
+        
+        try{     
+            st=cn.createStatement();
+            st.executeQuery(
+                    "SELECT P.id_proyeccion, F.nombre_film, H.hora, H.fecha FROM Funciones.T_Proyeccion AS P INNER JOIN Funciones.T_Horario AS H ON P.id_horario = H.id_horario INNER JOIN Funciones.T_Film AS F ON H.id_film = F.id_film");
+            rs = st.getResultSet();
+            proyecciones.removeAllItems();
+            while(rs.next()){
+               String proyeccion = rs.getString("nombre_film") + " - " + rs.getString("hora") + ", " + rs.getString("fecha");
+               
+               proyecciones.addItem(proyeccion);
+            }
+        }catch(Exception err){
+            System.out.println(err);
+        }
         /*
-        Detecta un cambio de pestaña y ejecuta una accion
+            Detecta un cambio de pestaña y ejecuta una accion
         */
         jTabbedPane1.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
@@ -115,46 +158,47 @@ public class Launcher extends javax.swing.JFrame {
         totalBoletos = new javax.swing.JLabel();
         aceptar = new javax.swing.JButton();
         totalVenta = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jCheckBox7 = new javax.swing.JCheckBox();
-        jCheckBox8 = new javax.swing.JCheckBox();
-        jCheckBox9 = new javax.swing.JCheckBox();
-        jCheckBox10 = new javax.swing.JCheckBox();
-        jCheckBox11 = new javax.swing.JCheckBox();
-        jCheckBox12 = new javax.swing.JCheckBox();
-        jCheckBox13 = new javax.swing.JCheckBox();
-        jCheckBox14 = new javax.swing.JCheckBox();
-        jCheckBox15 = new javax.swing.JCheckBox();
-        jCheckBox16 = new javax.swing.JCheckBox();
-        jCheckBox17 = new javax.swing.JCheckBox();
-        jCheckBox18 = new javax.swing.JCheckBox();
-        jCheckBox19 = new javax.swing.JCheckBox();
-        jCheckBox20 = new javax.swing.JCheckBox();
-        jCheckBox21 = new javax.swing.JCheckBox();
-        jCheckBox22 = new javax.swing.JCheckBox();
-        jCheckBox23 = new javax.swing.JCheckBox();
-        jCheckBox24 = new javax.swing.JCheckBox();
-        jCheckBox25 = new javax.swing.JCheckBox();
-        jCheckBox26 = new javax.swing.JCheckBox();
-        jCheckBox27 = new javax.swing.JCheckBox();
-        jCheckBox28 = new javax.swing.JCheckBox();
-        jCheckBox29 = new javax.swing.JCheckBox();
-        jCheckBox30 = new javax.swing.JCheckBox();
-        jCheckBox31 = new javax.swing.JCheckBox();
-        jCheckBox32 = new javax.swing.JCheckBox();
-        jCheckBox33 = new javax.swing.JCheckBox();
-        jCheckBox34 = new javax.swing.JCheckBox();
-        jCheckBox35 = new javax.swing.JCheckBox();
-        jCheckBox36 = new javax.swing.JCheckBox();
-        jCheckBox37 = new javax.swing.JCheckBox();
-        jCheckBox38 = new javax.swing.JCheckBox();
-        jCheckBox39 = new javax.swing.JCheckBox();
-        jCheckBox40 = new javax.swing.JCheckBox();
+        panelAsientos = new javax.swing.JPanel();
+        s1 = new javax.swing.JCheckBox();
+        s2 = new javax.swing.JCheckBox();
+        s3 = new javax.swing.JCheckBox();
+        s4 = new javax.swing.JCheckBox();
+        s5 = new javax.swing.JCheckBox();
+        s6 = new javax.swing.JCheckBox();
+        s7 = new javax.swing.JCheckBox();
+        s11 = new javax.swing.JCheckBox();
+        s12 = new javax.swing.JCheckBox();
+        s13 = new javax.swing.JCheckBox();
+        s14 = new javax.swing.JCheckBox();
+        s8 = new javax.swing.JCheckBox();
+        s9 = new javax.swing.JCheckBox();
+        s10 = new javax.swing.JCheckBox();
+        s18 = new javax.swing.JCheckBox();
+        s20 = new javax.swing.JCheckBox();
+        s19 = new javax.swing.JCheckBox();
+        s17 = new javax.swing.JCheckBox();
+        s21 = new javax.swing.JCheckBox();
+        s16 = new javax.swing.JCheckBox();
+        s15 = new javax.swing.JCheckBox();
+        s23 = new javax.swing.JCheckBox();
+        s25 = new javax.swing.JCheckBox();
+        s28 = new javax.swing.JCheckBox();
+        s22 = new javax.swing.JCheckBox();
+        s26 = new javax.swing.JCheckBox();
+        s27 = new javax.swing.JCheckBox();
+        s24 = new javax.swing.JCheckBox();
+        s29 = new javax.swing.JCheckBox();
+        s35 = new javax.swing.JCheckBox();
+        s33 = new javax.swing.JCheckBox();
+        s31 = new javax.swing.JCheckBox();
+        s30 = new javax.swing.JCheckBox();
+        s32 = new javax.swing.JCheckBox();
+        s34 = new javax.swing.JCheckBox();
+        s40 = new javax.swing.JCheckBox();
+        s38 = new javax.swing.JCheckBox();
+        s36 = new javax.swing.JCheckBox();
+        s37 = new javax.swing.JCheckBox();
+        s39 = new javax.swing.JCheckBox();
         jLabel16 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
@@ -249,7 +293,13 @@ public class Launcher extends javax.swing.JFrame {
         jLabel15.setText("Especial:");
         jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 167, -1, -1));
 
-        jPanel1.add(proyecciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(137, 41, 144, -1));
+        proyecciones.setSelectedIndex(-1);
+        proyecciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proyeccionesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(proyecciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(137, 41, 210, -1));
 
         cantAdulto.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
         jPanel1.add(cantAdulto, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 112, 71, -1));
@@ -265,52 +315,65 @@ public class Launcher extends javax.swing.JFrame {
         totalBoletos.setText("0");
         jPanel1.add(totalBoletos, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 79, -1, -1));
 
-        aceptar.setText("Aceptar");
-        jPanel1.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(229, 258, 100, -1));
+        aceptar.setText("Realizar Compra");
+        jPanel1.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(199, 258, 130, 30));
 
         totalVenta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         totalVenta.setText("0.00");
         jPanel1.add(totalVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(124, 223, -1, -1));
-        jPanel1.add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 41, -1, -1));
-        jPanel1.add(jCheckBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 41, -1, -1));
-        jPanel1.add(jCheckBox3, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 41, -1, -1));
-        jPanel1.add(jCheckBox4, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 41, -1, -1));
-        jPanel1.add(jCheckBox5, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 41, -1, -1));
-        jPanel1.add(jCheckBox6, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 41, -1, -1));
-        jPanel1.add(jCheckBox7, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 41, -1, -1));
-        jPanel1.add(jCheckBox8, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 74, -1, -1));
-        jPanel1.add(jCheckBox9, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 74, -1, -1));
-        jPanel1.add(jCheckBox10, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 74, -1, -1));
-        jPanel1.add(jCheckBox11, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 74, -1, -1));
-        jPanel1.add(jCheckBox12, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 74, -1, -1));
-        jPanel1.add(jCheckBox13, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 74, -1, -1));
-        jPanel1.add(jCheckBox14, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 74, -1, -1));
-        jPanel1.add(jCheckBox15, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 111, -1, -1));
-        jPanel1.add(jCheckBox16, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 111, -1, -1));
-        jPanel1.add(jCheckBox17, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 111, -1, -1));
-        jPanel1.add(jCheckBox18, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 111, -1, -1));
-        jPanel1.add(jCheckBox19, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 111, -1, -1));
-        jPanel1.add(jCheckBox20, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 111, -1, -1));
-        jPanel1.add(jCheckBox21, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 111, -1, -1));
-        jPanel1.add(jCheckBox22, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
-        jPanel1.add(jCheckBox23, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 150, -1, -1));
-        jPanel1.add(jCheckBox24, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 150, -1, -1));
-        jPanel1.add(jCheckBox25, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 150, -1, -1));
-        jPanel1.add(jCheckBox26, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 150, -1, -1));
-        jPanel1.add(jCheckBox27, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 150, -1, -1));
-        jPanel1.add(jCheckBox28, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 150, -1, -1));
-        jPanel1.add(jCheckBox29, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 189, -1, -1));
-        jPanel1.add(jCheckBox30, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 189, -1, -1));
-        jPanel1.add(jCheckBox31, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 189, -1, -1));
-        jPanel1.add(jCheckBox32, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 189, -1, -1));
-        jPanel1.add(jCheckBox33, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 189, -1, -1));
-        jPanel1.add(jCheckBox34, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 189, -1, -1));
-        jPanel1.add(jCheckBox35, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 189, -1, -1));
-        jPanel1.add(jCheckBox36, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 228, -1, -1));
-        jPanel1.add(jCheckBox37, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 228, -1, -1));
-        jPanel1.add(jCheckBox38, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 228, -1, -1));
-        jPanel1.add(jCheckBox39, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 228, -1, -1));
-        jPanel1.add(jCheckBox40, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 228, -1, -1));
+
+        javax.swing.GroupLayout panelAsientosLayout = new javax.swing.GroupLayout(panelAsientos);
+        panelAsientos.setLayout(panelAsientosLayout);
+        panelAsientosLayout.setHorizontalGroup(
+            panelAsientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 260, Short.MAX_VALUE)
+        );
+        panelAsientosLayout.setVerticalGroup(
+            panelAsientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 250, Short.MAX_VALUE)
+        );
+
+        jPanel1.add(panelAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, 260, 250));
+        jPanel1.add(s1, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 41, -1, -1));
+        jPanel1.add(s2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 41, -1, -1));
+        jPanel1.add(s3, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 41, -1, -1));
+        jPanel1.add(s4, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 41, -1, -1));
+        jPanel1.add(s5, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 41, -1, -1));
+        jPanel1.add(s6, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 41, -1, -1));
+        jPanel1.add(s7, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 41, -1, -1));
+        jPanel1.add(s11, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 74, -1, -1));
+        jPanel1.add(s12, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 74, -1, -1));
+        jPanel1.add(s13, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 74, -1, -1));
+        jPanel1.add(s14, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 74, -1, -1));
+        jPanel1.add(s8, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 74, -1, -1));
+        jPanel1.add(s9, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 74, -1, -1));
+        jPanel1.add(s10, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 74, -1, -1));
+        jPanel1.add(s18, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 111, -1, -1));
+        jPanel1.add(s20, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 111, -1, -1));
+        jPanel1.add(s19, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 111, -1, -1));
+        jPanel1.add(s17, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 111, -1, -1));
+        jPanel1.add(s21, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 111, -1, -1));
+        jPanel1.add(s16, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 111, -1, -1));
+        jPanel1.add(s15, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 111, -1, -1));
+        jPanel1.add(s23, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
+        jPanel1.add(s25, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 150, -1, -1));
+        jPanel1.add(s28, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 150, -1, -1));
+        jPanel1.add(s22, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 150, -1, -1));
+        jPanel1.add(s26, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 150, -1, -1));
+        jPanel1.add(s27, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 150, -1, -1));
+        jPanel1.add(s24, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 150, -1, -1));
+        jPanel1.add(s29, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 189, -1, -1));
+        jPanel1.add(s35, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 189, -1, -1));
+        jPanel1.add(s33, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 189, -1, -1));
+        jPanel1.add(s31, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 189, -1, -1));
+        jPanel1.add(s30, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 189, -1, -1));
+        jPanel1.add(s32, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 189, -1, -1));
+        jPanel1.add(s34, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 189, -1, -1));
+        jPanel1.add(s40, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 228, -1, -1));
+        jPanel1.add(s38, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 228, -1, -1));
+        jPanel1.add(s36, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 228, -1, -1));
+        jPanel1.add(s37, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 228, -1, -1));
+        jPanel1.add(s39, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 228, -1, -1));
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel16.setText("7");
@@ -967,7 +1030,7 @@ public class Launcher extends javax.swing.JFrame {
         */
         try
         {
-            st=cn.createStatement();
+            st = cn.createStatement();
             String nomFilm = jTextFieldNombreFilm.getText();
             int duracion = Integer.parseInt(jTextFieldDuracionFilm.getText());
             String query = "INSERT INTO Funciones.T_Film(nombre_film,duracion) VALUES('" + nomFilm + "'," + duracion + ")";
@@ -1267,6 +1330,11 @@ public class Launcher extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTableHorario2MouseClicked
 
+    private void proyeccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proyeccionesActionPerformed
+       selectProyec = String.valueOf(proyecciones.getSelectedItem());
+       
+    }//GEN-LAST:event_proyeccionesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1320,46 +1388,6 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JButton jButtonModificaHorario;
     private javax.swing.JButton jButtonModificaProyeccion;
     private javax.swing.JButton jButtonModificarSala;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox10;
-    private javax.swing.JCheckBox jCheckBox11;
-    private javax.swing.JCheckBox jCheckBox12;
-    private javax.swing.JCheckBox jCheckBox13;
-    private javax.swing.JCheckBox jCheckBox14;
-    private javax.swing.JCheckBox jCheckBox15;
-    private javax.swing.JCheckBox jCheckBox16;
-    private javax.swing.JCheckBox jCheckBox17;
-    private javax.swing.JCheckBox jCheckBox18;
-    private javax.swing.JCheckBox jCheckBox19;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox20;
-    private javax.swing.JCheckBox jCheckBox21;
-    private javax.swing.JCheckBox jCheckBox22;
-    private javax.swing.JCheckBox jCheckBox23;
-    private javax.swing.JCheckBox jCheckBox24;
-    private javax.swing.JCheckBox jCheckBox25;
-    private javax.swing.JCheckBox jCheckBox26;
-    private javax.swing.JCheckBox jCheckBox27;
-    private javax.swing.JCheckBox jCheckBox28;
-    private javax.swing.JCheckBox jCheckBox29;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox30;
-    private javax.swing.JCheckBox jCheckBox31;
-    private javax.swing.JCheckBox jCheckBox32;
-    private javax.swing.JCheckBox jCheckBox33;
-    private javax.swing.JCheckBox jCheckBox34;
-    private javax.swing.JCheckBox jCheckBox35;
-    private javax.swing.JCheckBox jCheckBox36;
-    private javax.swing.JCheckBox jCheckBox37;
-    private javax.swing.JCheckBox jCheckBox38;
-    private javax.swing.JCheckBox jCheckBox39;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox40;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JCheckBox jCheckBox8;
-    private javax.swing.JCheckBox jCheckBox9;
     private javax.swing.JComboBox<String> jComboBoxHorarioProyeccion;
     private javax.swing.JComboBox<String> jComboBoxNombreHorario;
     private javax.swing.JComboBox<String> jComboBoxNumeroProyeccion;
@@ -1420,7 +1448,48 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldHoraHorario;
     private javax.swing.JTextField jTextFieldNombreFilm;
     private javax.swing.JTextField jTextFieldNumeroSala;
+    private javax.swing.JPanel panelAsientos;
     private javax.swing.JComboBox<String> proyecciones;
+    private javax.swing.JCheckBox s1;
+    private javax.swing.JCheckBox s10;
+    private javax.swing.JCheckBox s11;
+    private javax.swing.JCheckBox s12;
+    private javax.swing.JCheckBox s13;
+    private javax.swing.JCheckBox s14;
+    private javax.swing.JCheckBox s15;
+    private javax.swing.JCheckBox s16;
+    private javax.swing.JCheckBox s17;
+    private javax.swing.JCheckBox s18;
+    private javax.swing.JCheckBox s19;
+    private javax.swing.JCheckBox s2;
+    private javax.swing.JCheckBox s20;
+    private javax.swing.JCheckBox s21;
+    private javax.swing.JCheckBox s22;
+    private javax.swing.JCheckBox s23;
+    private javax.swing.JCheckBox s24;
+    private javax.swing.JCheckBox s25;
+    private javax.swing.JCheckBox s26;
+    private javax.swing.JCheckBox s27;
+    private javax.swing.JCheckBox s28;
+    private javax.swing.JCheckBox s29;
+    private javax.swing.JCheckBox s3;
+    private javax.swing.JCheckBox s30;
+    private javax.swing.JCheckBox s31;
+    private javax.swing.JCheckBox s32;
+    private javax.swing.JCheckBox s33;
+    private javax.swing.JCheckBox s34;
+    private javax.swing.JCheckBox s35;
+    private javax.swing.JCheckBox s36;
+    private javax.swing.JCheckBox s37;
+    private javax.swing.JCheckBox s38;
+    private javax.swing.JCheckBox s39;
+    private javax.swing.JCheckBox s4;
+    private javax.swing.JCheckBox s40;
+    private javax.swing.JCheckBox s5;
+    private javax.swing.JCheckBox s6;
+    private javax.swing.JCheckBox s7;
+    private javax.swing.JCheckBox s8;
+    private javax.swing.JCheckBox s9;
     private javax.swing.JLabel totalBoletos;
     private javax.swing.JLabel totalVenta;
     // End of variables declaration//GEN-END:variables
