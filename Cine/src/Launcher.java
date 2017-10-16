@@ -1,15 +1,17 @@
 
-import java.awt.event.ItemListener;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
@@ -24,8 +26,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author josue
  */
-    
-public class Launcher extends javax.swing.JFrame {
+public class Launcher extends javax.swing.JFrame{
     
     /**
      * Creates new form Launcher
@@ -35,13 +36,20 @@ public class Launcher extends javax.swing.JFrame {
     private Statement st=null;
     final String user;
     final String pass;
-    private int cantBoletos;
-    private double totalVen;
+    
+    	
+    ArrayList<JCheckBox> boletosSelect = new ArrayList<JCheckBox>();
+    ArrayList<Integer> asientosSelect = new ArrayList<Integer>();
+    private int cantBoletos = 0;
+    private double totalVen = 0.00;
+    
+    
     final double precioAdulto = 60;
     final double precioNino = 40;
-    final double porcDescuento = 0.30;
+    final double porcDescuento = 0.70;
     private boolean[] asientos = new boolean[40];
-    private String selectProyec;
+    private int selectProyec;
+    private DefaultTableModel model;
 
     ChangeListener listenerSpinner = new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -51,14 +59,9 @@ public class Launcher extends javax.swing.JFrame {
                         ((Integer)cantNino.getValue() * precioNino) +
                         ((Integer)cantEspecial.getValue() * (precioAdulto * porcDescuento));
         totalVenta.setText(String.valueOf(totalVen));
-        if(cantBoletos > 0)
-            panelAsientos.setVisible(false);
-        else
-            panelAsientos.setVisible(true);
       }
     };
-   
-    private DefaultTableModel model;
+    
     public Launcher(String user, String pass) {
         initComponents();
         cantAdulto.addChangeListener(listenerSpinner);
@@ -72,27 +75,19 @@ public class Launcher extends javax.swing.JFrame {
         actualizaSala();
         actualizaHorario();
         actualizaProyeccion();
+        actualizaDetalleVenta();
+        actualizaVenta();
+        actualizaComboProyecciones();   
         
-        try{     
-            st=cn.createStatement();
-            st.executeQuery(
-                    "SELECT P.id_proyeccion, F.nombre_film, H.hora, H.fecha FROM Funciones.T_Proyeccion AS P INNER JOIN Funciones.T_Horario AS H ON P.id_horario = H.id_horario INNER JOIN Funciones.T_Film AS F ON H.id_film = F.id_film");
-            rs = st.getResultSet();
-            proyecciones.removeAllItems();
-            while(rs.next()){
-               String proyeccion = rs.getString("nombre_film") + " - " + rs.getString("hora") + ", " + rs.getString("fecha");
-               
-               proyecciones.addItem(proyeccion);
-            }
-        }catch(Exception err){
-            System.out.println(err);
-        }
+        
+        
+        
         /*
             Detecta un cambio de pestaña y ejecuta una accion
         */
         jTabbedPane1.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
-            System.out.println(""+jTabbedPane1.getSelectedIndex());
+            //System.out.println(""+jTabbedPane1.getSelectedIndex());
             if(jTabbedPane1.getSelectedIndex()==4) //Index starts at 0, so Index 2 = Tab3
             {
                 try{     
@@ -107,6 +102,10 @@ public class Launcher extends javax.swing.JFrame {
                 }catch(Exception err){
                     System.out.println(err);
                 }
+            }
+            if(jTabbedPane1.getSelectedIndex() == 1)
+            {
+                actualizaComboProyecciones();
             }
             if(jTabbedPane1.getSelectedIndex()==2) //Index starts at 0, so Index 2 = Tab3
             {
@@ -215,10 +214,10 @@ public class Launcher extends javax.swing.JFrame {
         jLabel30 = new javax.swing.JLabel();
         jLabel31 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTableHorario1 = new javax.swing.JTable();
+        jTableDetalleVenta = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTableHorario2 = new javax.swing.JTable();
+        jTableVenta = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -293,13 +292,8 @@ public class Launcher extends javax.swing.JFrame {
         jLabel15.setText("Especial:");
         jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 167, -1, -1));
 
-        proyecciones.setSelectedIndex(-1);
-        proyecciones.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proyeccionesActionPerformed(evt);
-            }
-        });
-        jPanel1.add(proyecciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(137, 41, 210, -1));
+        proyecciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "- Seleccionar -" }));
+        jPanel1.add(proyecciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(137, 41, 240, -1));
 
         cantAdulto.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
         jPanel1.add(cantAdulto, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 112, 71, -1));
@@ -309,14 +303,20 @@ public class Launcher extends javax.swing.JFrame {
 
         cantEspecial.setModel(new javax.swing.SpinnerNumberModel(0, 0, 40, 1));
         jPanel1.add(cantEspecial, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 164, 71, -1));
-        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 202, 280, 10));
+        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 202, 340, 10));
 
         totalBoletos.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         totalBoletos.setText("0");
         jPanel1.add(totalBoletos, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 79, -1, -1));
 
         aceptar.setText("Realizar Compra");
-        jPanel1.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(199, 258, 130, 30));
+        aceptar.setEnabled(false);
+        aceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aceptarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(aceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 260, 130, 30));
 
         totalVenta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         totalVenta.setText("0.00");
@@ -333,46 +333,286 @@ public class Launcher extends javax.swing.JFrame {
             .addGap(0, 250, Short.MAX_VALUE)
         );
 
-        jPanel1.add(panelAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 20, 260, 250));
+        jPanel1.add(panelAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 260, 250));
+
+        s1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s1, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 41, -1, -1));
+
+        s2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 41, -1, -1));
+
+        s3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s3, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 41, -1, -1));
+
+        s4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s4, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 41, -1, -1));
+
+        s5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s5, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 41, -1, -1));
+
+        s6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s6, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 41, -1, -1));
+
+        s7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s7, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 41, -1, -1));
+
+        s11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s11, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 74, -1, -1));
+
+        s12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s12, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 74, -1, -1));
+
+        s13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s13, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 74, -1, -1));
+
+        s14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s14, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 74, -1, -1));
+
+        s8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s8, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 74, -1, -1));
+
+        s9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s9, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 74, -1, -1));
+
+        s10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s10, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 74, -1, -1));
+
+        s18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s18, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 111, -1, -1));
+
+        s20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s20, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 111, -1, -1));
+
+        s19.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s19, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 111, -1, -1));
+
+        s17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s17, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 111, -1, -1));
+
+        s21.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s21, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 111, -1, -1));
+
+        s16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s16, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 111, -1, -1));
+
+        s15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s15, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 111, -1, -1));
+
+        s23.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s23, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 150, -1, -1));
+
+        s25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s25, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 150, -1, -1));
+
+        s28.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s28, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 150, -1, -1));
+
+        s22.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s22, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 150, -1, -1));
+
+        s26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s26, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 150, -1, -1));
+
+        s27.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s27, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 150, -1, -1));
+
+        s24.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s24, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 150, -1, -1));
+
+        s29.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s29, new org.netbeans.lib.awtextra.AbsoluteConstraints(507, 189, -1, -1));
+
+        s35.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s35, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 189, -1, -1));
+
+        s33.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s33, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 189, -1, -1));
+
+        s31.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s31, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 189, -1, -1));
+
+        s30.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s30, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 189, -1, -1));
+
+        s32.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s32, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 189, -1, -1));
+
+        s34.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s34, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 189, -1, -1));
+
+        s40.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s40, new org.netbeans.lib.awtextra.AbsoluteConstraints(622, 228, -1, -1));
+
+        s38.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s38, new org.netbeans.lib.awtextra.AbsoluteConstraints(576, 228, -1, -1));
+
+        s36.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s36, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 228, -1, -1));
+
+        s37.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s37, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 228, -1, -1));
+
+        s39.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAsiento(evt);
+            }
+        });
         jPanel1.add(s39, new org.netbeans.lib.awtextra.AbsoluteConstraints(599, 228, -1, -1));
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -436,7 +676,7 @@ public class Launcher extends javax.swing.JFrame {
         jLabel31.setText("TOTAL:  $");
         jPanel1.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 223, -1, -1));
 
-        jTableHorario1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableDetalleVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -447,19 +687,14 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTableHorario1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableHorario1MouseClicked(evt);
-            }
-        });
-        jScrollPane5.setViewportView(jTableHorario1);
+        jScrollPane5.setViewportView(jTableDetalleVenta);
 
         jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 740, 190));
 
         jTabbedPane1.addTab("Detalle de venta", jPanel1);
         jPanel1.getAccessibleContext().setAccessibleName("");
 
-        jTableHorario2.setModel(new javax.swing.table.DefaultTableModel(
+        jTableVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -470,12 +705,7 @@ public class Launcher extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jTableHorario2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableHorario2MouseClicked(evt);
-            }
-        });
-        jScrollPane6.setViewportView(jTableHorario2);
+        jScrollPane6.setViewportView(jTableVenta);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -491,7 +721,7 @@ public class Launcher extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(171, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Venta", jPanel2);
@@ -585,7 +815,7 @@ public class Launcher extends javax.swing.JFrame {
                     .addComponent(jComboBoxHorarioProyeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Proyección", jPanel3);
@@ -671,7 +901,7 @@ public class Launcher extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99))
         );
@@ -774,7 +1004,7 @@ public class Launcher extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jComboBoxTipoSala, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(99, 99, 99))
         );
@@ -901,7 +1131,57 @@ public class Launcher extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void actualizaComboProyecciones()
+    {
+        try{   
+            proyecciones.removeItemListener(proyecciones.getItemListeners()[0]);
+            proyecciones.removeAllItems();
+            proyecciones.addItem("- Seleccionar -");
+            st=cn.createStatement();
+            st.executeQuery("SELECT P.id_proyeccion, F.nombre_film, H.hora, H.fecha FROM Funciones.T_Proyeccion AS P INNER JOIN Funciones.T_Horario AS H ON P.id_horario = H.id_horario INNER JOIN Funciones.T_Film AS F ON H.id_film = F.id_film");
+            rs = st.getResultSet();
+            while(rs.next()){
+               String proyeccion = rs.getString("id_proyeccion") +" - "+ rs.getString("nombre_film") + " - " + rs.getString("hora") + ", " + rs.getString("fecha");
+               proyecciones.addItem(proyeccion);
+            }
+            
+            proyecciones.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                    String strAux = String.valueOf(proyecciones.getSelectedItem());
+                    if(strAux.equals("- Seleccionar -"))
+                    {
+                        panelAsientos.setVisible(true);
+                        cantAdulto.setValue(new Integer(0));
+                        cantNino.setValue(new Integer(0));
+                        cantEspecial.setValue(new Integer(0));
+                        cantAdulto.setEnabled(false);                        
+                        cantNino.setEnabled(false);
+                        cantEspecial.setEnabled(false);
+                        aceptar.setEnabled(false);
+                        cantBoletos = 0;
+                        totalBoletos.setText("0");
+                        totalVenta.setText("0.00");
+                        totalVen = 0;
+                    }
+                    else
+                    {
+                        selectProyec =  Integer.valueOf(strAux.substring(0, strAux.indexOf("-") - 1));
+                        actualizaAsientosDisponibles(selectProyec);
+                        panelAsientos.setVisible(false);
+                        cantAdulto.setEnabled(true);                        
+                        cantNino.setEnabled(true);
+                        cantEspecial.setEnabled(true);
+                        aceptar.setEnabled(true);
 
+                    } 
+                }
+            });
+        }catch(Exception err){
+            System.out.println(err);
+        }
+    }
+    
     private void actualizaFilm(){
         /*
         Actualiza la tabla
@@ -922,7 +1202,6 @@ public class Launcher extends javax.swing.JFrame {
                 model.addRow(tuplas);
                 System.out.println(model.getRowCount());
             }
-            
         }catch(Exception e){
             System.out.println("Error al cargar los datos");
         }
@@ -955,7 +1234,7 @@ public class Launcher extends javax.swing.JFrame {
         }
     }
     
-        private void actualizaHorario(){
+    private void actualizaHorario(){
         /*
         Actualiza la tabla
         */
@@ -1008,6 +1287,62 @@ public class Launcher extends javax.swing.JFrame {
             System.out.println("Error al cargar los datos");
         }
     }
+    
+    private void actualizaDetalleVenta(){
+    /*
+    Actualiza la tabla T_DetalleVenta
+    */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"id_detalleVenta", "id_venta", "id_proyeccion", "tipo_boleto", "asiento", "subtotal"};
+            String query = "SELECT * FROM Ventas.T_DetalleVenta";
+            model = new DefaultTableModel(renglon,columna);
+            jTableDetalleVenta.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[6];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_detalleVenta");
+                tuplas[1] = rs.getObject("id_venta");
+                tuplas[2] = rs.getObject("id_proyeccion");
+                tuplas[3] = rs.getObject("tipo_boleto");
+                tuplas[4] = rs.getObject("asiento");
+                tuplas[5] = rs.getObject("subtotal");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos");
+        }
+    }
+    
+     private void actualizaVenta(){
+    /*
+    Actualiza la tabla T_Venta
+    */
+        try{
+            String renglon[][] = {};
+            String columna[] = {"id_venta", "hora", "total", "iva"};
+            String query = "SELECT * FROM Ventas.T_Venta";
+            model = new DefaultTableModel(renglon,columna);
+            jTableVenta.setModel(model);
+            rs = st.executeQuery(query);
+            Object tuplas[] = new Object[4];
+            while(rs.next())
+            {
+                tuplas[0] = rs.getObject("id_venta");
+                tuplas[1] = rs.getObject("hora");
+                tuplas[2] = rs.getObject("total");
+                tuplas[3] = rs.getObject("iva");
+                model.addRow(tuplas);
+                System.out.println(model.getRowCount());
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error al cargar los datos de ventas");
+        }
+    }
         
     private void conexion(){
         try{
@@ -1022,6 +1357,66 @@ public class Launcher extends javax.swing.JFrame {
         {
             System.out.println("Error de conexion");
         }
+    }
+    
+    private void actualizaAsientosDisponibles(int idProyeccion){
+         try{    
+            for(int i = 0; i < 40 ; i++)
+              asientos[i] = false;
+            
+            st = cn.createStatement();
+            st.executeQuery("SELECT * FROM Ventas.T_DetalleVenta WHERE id_Proyeccion = " + idProyeccion);
+            rs = st.getResultSet();
+            while(rs.next()){
+               String asiento = rs.getString("asiento");
+               asientos[Integer.valueOf(asiento)] = true;
+            }
+        }catch(Exception err){
+            System.out.println(err);
+        }
+        
+        s1.setSelected(asientos[0]);
+        s2.setSelected(asientos[1]);
+        s3.setSelected(asientos[2]);
+        s4.setSelected(asientos[3]);
+        s5.setSelected(asientos[4]);
+        s6.setSelected(asientos[5]);
+        s7.setSelected(asientos[6]);
+        s8.setSelected(asientos[7]);
+        s9.setSelected(asientos[8]);
+        s10.setSelected(asientos[9]);
+        s11.setSelected(asientos[10]);
+        s12.setSelected(asientos[11]);
+        s13.setSelected(asientos[12]);
+        s14.setSelected(asientos[13]);
+        s15.setSelected(asientos[14]);
+        s16.setSelected(asientos[15]);
+        s17.setSelected(asientos[16]);
+        s18.setSelected(asientos[17]);
+        s19.setSelected(asientos[18]);
+        s20.setSelected(asientos[19]);
+        s21.setSelected(asientos[20]);
+        s22.setSelected(asientos[21]);
+        s23.setSelected(asientos[22]);
+        s24.setSelected(asientos[23]);
+        s25.setSelected(asientos[24]);
+        s26.setSelected(asientos[25]);
+        s27.setSelected(asientos[26]);
+        s28.setSelected(asientos[27]);
+        s29.setSelected(asientos[28]);
+        s30.setSelected(asientos[29]);
+        s31.setSelected(asientos[30]);
+        s32.setSelected(asientos[31]);
+        s33.setSelected(asientos[32]);
+        s34.setSelected(asientos[33]);
+        s35.setSelected(asientos[34]);
+        s36.setSelected(asientos[35]);
+        s37.setSelected(asientos[36]);
+        s38.setSelected(asientos[37]);
+        s39.setSelected(asientos[38]);
+        s40.setSelected(asientos[39]);
+        estadoAsientos(false);
+        
     }
     
     private void jButtonInsertaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaFilmActionPerformed
@@ -1267,7 +1662,7 @@ public class Launcher extends javax.swing.JFrame {
             st=cn.createStatement();
             int id_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
             int id_horario = Integer.parseInt(jComboBoxHorarioProyeccion.getSelectedItem().toString());
-            String query = "INSERT INTO Funciones.T_Proyeccion(id_sala, id_horario, asientos_disponibles) VALUES("+ id_sala + "," + id_horario + "," + 0 +")";
+            String query = "INSERT INTO Funciones.T_Proyeccion(id_sala, id_horario, asientos_disponibles) VALUES("+ id_sala + "," + id_horario + "," + 40 +")";
             st.executeUpdate(query);
             actualizaProyeccion();
             System.out.println("Tupla insertada correctamente");
@@ -1322,19 +1717,264 @@ public class Launcher extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonEliminaProyeccionActionPerformed
 
-    private void jTableHorario1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorario1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTableHorario1MouseClicked
+    private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
+        int idVenta = -1, hora, minutos;
+        Calendar calendario = Calendar.getInstance();
+        hora =calendario.get(Calendar.HOUR_OF_DAY);
+        minutos = calendario.get(Calendar.MINUTE);
+        String horaActual = String.valueOf(hora) + ":" +String.valueOf(minutos);
+        
+        try{
+            st=cn.createStatement();
+            String query = "INSERT INTO Ventas.T_Venta(hora, total, iva) VALUES('"+ horaActual +"', 0, 0)";
+            st.executeUpdate(query);            
+        }catch(Exception ex){}
+        
+        try{
+            st = cn.createStatement();
+            st.executeQuery("SELECT id_venta FROM Ventas.T_Venta ORDER BY id_venta DESC LIMIT 1");
+            rs = st.getResultSet();
+            while(rs.next()){
+               String id_venta = rs.getString("id_venta");
+               idVenta = Integer.valueOf(id_venta);
+            }
+        }catch(Exception ex){}  
+        
+        Iterator<Integer> asiento = asientosSelect.iterator();
+        while(asiento.hasNext()){
+            for(int i = 0; i < (Integer)cantAdulto.getValue(); i++)
+            {
+                try
+                {                  
+                    st=cn.createStatement();
+                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Adulto', " + asiento.next() + ","+ precioAdulto +")";
+                    st.executeUpdate(query);
+                    
+                }catch(Exception ex){ }
+            }
+            for(int i = 0; i < (Integer)cantNino.getValue(); i++)
+            {
+                try
+                {                  
+                    st=cn.createStatement();
+                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Niño', " + asiento.next() + ","+ precioNino +")";
+                    st.executeUpdate(query);
+                    
+                }catch(Exception ex){ }
+            }
+            for(int i = 0; i < (Integer)cantEspecial.getValue(); i++)
+            {
+                try
+                {                  
+                    st=cn.createStatement();
+                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Especial', " + asiento.next() + ","+ precioAdulto * porcDescuento +")";
+                    st.executeUpdate(query);
+                    
+                }catch(Exception ex){ }
+            }
+        }
+        actualizaDetalleVenta();
+        actualizaVenta();
+        proyecciones.setSelectedIndex(0);
+    }//GEN-LAST:event_aceptarActionPerformed
 
-    private void jTableHorario2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorario2MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTableHorario2MouseClicked
-
-    private void proyeccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proyeccionesActionPerformed
-       selectProyec = String.valueOf(proyecciones.getSelectedItem());
-       
-    }//GEN-LAST:event_proyeccionesActionPerformed
-
+    private void selectAsiento(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAsiento
+        JCheckBox box = (JCheckBox)evt.getSource();
+        if(box.isSelected())
+            boletosSelect.add(box);
+        else
+            boletosSelect.remove(box);
+        
+        if(boletosSelect.size() < cantBoletos)
+           estadoAsientos(false);
+        else
+        {
+            estadoAsientos(true);
+            Iterator<JCheckBox> asiento = boletosSelect.iterator();
+            while(asiento.hasNext()){
+                JCheckBox JCB = asiento.next();
+                JCB.setEnabled(true);
+            }
+        } 
+        asientosSelect =  new ArrayList<Integer>();
+        Iterator<JCheckBox> asiento = boletosSelect.iterator();
+        while(asiento.hasNext()){
+            JCheckBox JCB = asiento.next();
+            if(JCB == s1)
+                asientosSelect.add(1);
+            if(JCB == s2)
+                asientosSelect.add(2);
+            if(JCB == s3)
+                asientosSelect.add(3);
+            if(JCB == s4)
+                asientosSelect.add(4);
+            if(JCB == s5)
+                asientosSelect.add(5);
+            if(JCB == s6)
+                asientosSelect.add(6);
+            if(JCB == s7)
+                asientosSelect.add(7);
+            if(JCB == s8)
+                asientosSelect.add(8);
+            if(JCB == s9)
+                asientosSelect.add(9);
+            if(JCB == s10)
+                asientosSelect.add(10);
+            if(JCB == s11)
+                asientosSelect.add(11);
+            if(JCB == s12)
+                asientosSelect.add(12);
+            if(JCB == s13)
+                asientosSelect.add(13);
+            if(JCB == s14)
+                asientosSelect.add(14);
+            if(JCB == s15)
+                asientosSelect.add(15);
+            if(JCB == s16)
+                asientosSelect.add(16);
+            if(JCB == s17)
+                asientosSelect.add(17);
+            if(JCB == s18)
+                asientosSelect.add(18);
+            if(JCB == s19)
+                asientosSelect.add(19);
+            if(JCB == s20)
+                asientosSelect.add(20); 
+            if(JCB == s21)
+                asientosSelect.add(21);
+            if(JCB == s22)
+                asientosSelect.add(22);
+            if(JCB == s23)
+                asientosSelect.add(23);
+            if(JCB == s24)
+                asientosSelect.add(24);
+            if(JCB == s25)
+                asientosSelect.add(25);
+            if(JCB == s26)
+                asientosSelect.add(26);
+            if(JCB == s27)
+                asientosSelect.add(27);
+            if(JCB == s28)
+                asientosSelect.add(28);
+            if(JCB == s29)
+                asientosSelect.add(29);
+            if(JCB == s30)
+                asientosSelect.add(30); 
+            if(JCB == s31)
+                asientosSelect.add(31);
+            if(JCB == s32)
+                asientosSelect.add(32);
+            if(JCB == s33)
+                asientosSelect.add(33);
+            if(JCB == s34)
+                asientosSelect.add(34);
+            if(JCB == s35)
+                asientosSelect.add(35);
+            if(JCB == s36)
+                asientosSelect.add(36);
+            if(JCB == s37)
+                asientosSelect.add(37);
+            if(JCB == s38)
+                asientosSelect.add(38);
+            if(JCB == s39)
+                asientosSelect.add(39);
+            if(JCB == s40)
+                asientosSelect.add(40);   
+        }
+        
+        
+    }//GEN-LAST:event_selectAsiento
+    
+    public void estadoAsientos(boolean activo)
+    {
+        if(activo)
+        {
+            s1.setEnabled(asientos[0]);
+            s2.setEnabled(asientos[1]);
+            s3.setEnabled(asientos[2]);
+            s4.setEnabled(asientos[3]);
+            s5.setEnabled(asientos[4]);
+            s6.setEnabled(asientos[5]);
+            s7.setEnabled(asientos[6]);
+            s8.setEnabled(asientos[7]);
+            s9.setEnabled(asientos[8]);
+            s10.setEnabled(asientos[9]);
+            s11.setEnabled(asientos[10]);
+            s12.setEnabled(asientos[11]);
+            s13.setEnabled(asientos[12]);
+            s14.setEnabled(asientos[13]);
+            s15.setEnabled(asientos[14]);
+            s16.setEnabled(asientos[15]);
+            s17.setEnabled(asientos[16]);
+            s18.setEnabled(asientos[17]);
+            s19.setEnabled(asientos[18]);
+            s20.setEnabled(asientos[19]);
+            s21.setEnabled(asientos[20]);
+            s22.setEnabled(asientos[21]);
+            s23.setEnabled(asientos[22]);
+            s24.setEnabled(asientos[23]);
+            s25.setEnabled(asientos[24]);
+            s26.setEnabled(asientos[25]);
+            s27.setEnabled(asientos[26]);
+            s28.setEnabled(asientos[27]);
+            s29.setEnabled(asientos[28]);
+            s30.setEnabled(asientos[29]);
+            s31.setEnabled(asientos[30]);
+            s32.setEnabled(asientos[31]);
+            s33.setEnabled(asientos[32]);
+            s34.setEnabled(asientos[33]);
+            s35.setEnabled(asientos[34]);
+            s36.setEnabled(asientos[35]);
+            s37.setEnabled(asientos[36]);
+            s38.setEnabled(asientos[37]);
+            s39.setEnabled(asientos[38]);
+            s40.setEnabled(asientos[39]);
+        }
+        else{
+            s1.setEnabled(!asientos[0]);
+            s2.setEnabled(!asientos[1]);
+            s3.setEnabled(!asientos[2]);
+            s4.setEnabled(!asientos[3]);
+            s5.setEnabled(!asientos[4]);
+            s6.setEnabled(!asientos[5]);
+            s7.setEnabled(!asientos[6]);
+            s8.setEnabled(!asientos[7]);
+            s9.setEnabled(!asientos[8]);
+            s10.setEnabled(!asientos[9]);
+            s11.setEnabled(!asientos[10]);
+            s12.setEnabled(!asientos[11]);
+            s13.setEnabled(!asientos[12]);
+            s14.setEnabled(!asientos[13]);
+            s15.setEnabled(!asientos[14]);
+            s16.setEnabled(!asientos[15]);
+            s17.setEnabled(!asientos[16]);
+            s18.setEnabled(!asientos[17]);
+            s19.setEnabled(!asientos[18]);
+            s20.setEnabled(!asientos[19]);
+            s21.setEnabled(!asientos[20]);
+            s22.setEnabled(!asientos[21]);
+            s23.setEnabled(!asientos[22]);
+            s24.setEnabled(!asientos[23]);
+            s25.setEnabled(!asientos[24]);
+            s26.setEnabled(!asientos[25]);
+            s27.setEnabled(!asientos[26]);
+            s28.setEnabled(!asientos[27]);
+            s29.setEnabled(!asientos[28]);
+            s30.setEnabled(!asientos[29]);
+            s31.setEnabled(!asientos[30]);
+            s32.setEnabled(!asientos[31]);
+            s33.setEnabled(!asientos[32]);
+            s34.setEnabled(!asientos[33]);
+            s35.setEnabled(!asientos[34]);
+            s36.setEnabled(!asientos[35]);
+            s37.setEnabled(!asientos[36]);
+            s38.setEnabled(!asientos[37]);
+            s39.setEnabled(!asientos[38]);
+            s40.setEnabled(!asientos[39]);
+        }
+            
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -1368,9 +2008,7 @@ public class Launcher extends javax.swing.JFrame {
                 //new Launcher().setVisible(true);
             }
         });
-        
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aceptar;
     private javax.swing.JSpinner cantAdulto;
@@ -1437,12 +2075,12 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTableDetalleVenta;
     private javax.swing.JTable jTableFilm;
     private javax.swing.JTable jTableHorario;
-    private javax.swing.JTable jTableHorario1;
-    private javax.swing.JTable jTableHorario2;
     private javax.swing.JTable jTableProyeccion;
     private javax.swing.JTable jTableSala;
+    private javax.swing.JTable jTableVenta;
     private javax.swing.JTextField jTextFieldCupoSala;
     private javax.swing.JTextField jTextFieldDuracionFilm;
     private javax.swing.JTextField jTextFieldHoraHorario;
@@ -1494,3 +2132,7 @@ public class Launcher extends javax.swing.JFrame {
     private javax.swing.JLabel totalVenta;
     // End of variables declaration//GEN-END:variables
 }
+
+
+
+
