@@ -75,3 +75,42 @@ CREATE TABLE Ventas.T_DetalleVenta(
 	CONSTRAINT FK_VENTA FOREIGN KEY(id_venta) REFERENCES Ventas.T_Venta(id_venta),
 	CONSTRAINT FK_PROYECCION FOREIGN KEY(id_proyeccion) REFERENCES Funciones.T_Proyeccion(id_proyeccion)
 );
+
+--TIGGERS
+--Actualiza Asientos de Tabla Proyeccion al realizar una venta 
+CREATE OR REPLACE FUNCTION actualizaAsiento()
+RETURNS TRIGGER AS $actualizaAsiento$
+DECLARE
+BEGIN
+	UPDATE FUNCIONES.T_Proyeccion SET asientos_disponibles=asientos_disponibles-1
+	WHERE FUNCIONES.T_Proyeccion.id_proyeccion = NEW.id_proyeccion;
+	return NEW;
+	END
+	$actualizaAsiento$ LANGUAGE plpgsql;
+
+CREATE TRIGGER actualizaAsiento
+AFTER INSERT ON VENTAS.T_DetalleVenta
+FOR EACH ROW
+EXECUTE PROCEDURE actualizaAsiento();
+
+--Verifica si hay cupo en la Proyeccion si no cancela la venta
+CREATE OR REPLACE FUNCTION revisaCupo()
+RETURNS TRIGGER AS $revisaCupo$
+DECLARE
+BEGIN 
+	IF ((SELECT asientos_disponibles FROM FUNCIONES.T_Proyeccion 
+	    WHERE FUNCIONES.T_Proyeccion.id_proyeccion = NEW.id_proyeccion) <=-1)
+	    THEN
+		rollback transaction;
+		raise notice 'No hay cupo!!';
+		return NEW;
+	    ELSE
+		  return NEW;
+	    END IF;
+	END;
+	$revisaCupo$ LANGUAGE plpgsql;
+			
+CREATE TRIGGER revisaCupo
+AFTER INSERT ON VENTAS.T_DetalleVenta
+FOR EACH ROW
+EXECUTE PROCEDURE revisaCupo();
