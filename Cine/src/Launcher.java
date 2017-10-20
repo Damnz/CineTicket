@@ -3,6 +3,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
@@ -1435,9 +1437,14 @@ public class Launcher extends javax.swing.JFrame{
             jTextFieldNombreFilm.setText("");
             jTextFieldDuracionFilm.setText("");
             System.out.println("Tupla insertada correctamente");
-        }catch(Exception e)
+        }catch(Exception ex)
         {
-            System.out.println("Error al insertar");
+            String exc = "ERROR: llave duplicada viola restricción de unicidad «unico_film»";
+            final String ss = ex.getMessage();
+            if(ss.contains(exc)){
+                JOptionPane.showMessageDialog(null, "El número de sala ya existe");  
+            }
+            System.out.println(ss);
         }
     }//GEN-LAST:event_jButtonInsertaFilmActionPerformed
 
@@ -1516,9 +1523,15 @@ public class Launcher extends javax.swing.JFrame{
             jTextFieldNumeroSala.setText("");
             jTextFieldCupoSala.setText("");
             System.out.println("Tupla insertada correctamente");
-        }catch(Exception e)
+        }catch(Exception ex)
         {
-            System.out.println("Error al insertar");
+            String exc = "ERROR: llave duplicada viola restricción de unicidad «unica_sala»";
+            final String ss = ex.getMessage();
+            if(ss.contains(exc)){
+                JOptionPane.showMessageDialog(null, "El número de sala ya existe");  
+            }
+            //JOptionPane.showMessageDialog(null, "El número de sala ya existe");
+            System.out.println(ss);
         }
     }//GEN-LAST:event_jButtonInsertarSalaActionPerformed
 
