@@ -50,7 +50,7 @@ public class Launcher extends javax.swing.JFrame{
     final double precioNino = 40;
     final double porcDescuento = 0.70;
     private boolean[] asientos = new boolean[40];
-    private int selectProyec;
+    private int selectProyec = -1;
     private DefaultTableModel model;
 
     ChangeListener listenerSpinner = new ChangeListener() {
@@ -80,9 +80,6 @@ public class Launcher extends javax.swing.JFrame{
         actualizaDetalleVenta();
         actualizaVenta();
         actualizaComboProyecciones();   
-        
-        
-        
         
         /*
             Detecta un cambio de pestaña y ejecuta una accion
@@ -1165,11 +1162,17 @@ public class Launcher extends javax.swing.JFrame{
                         totalBoletos.setText("0");
                         totalVenta.setText("0.00");
                         totalVen = 0;
+                        boletosSelect = new ArrayList<JCheckBox>();
+                        asientosSelect = new ArrayList<Integer>();
+                        selectProyec = -1;
+                        model = (DefaultTableModel) jTableDetalleVenta.getModel();
+                        model.setRowCount(0);
                     }
                     else
                     {
                         selectProyec =  Integer.valueOf(strAux.substring(0, strAux.indexOf("-") - 1));
                         actualizaAsientosDisponibles(selectProyec);
+                        actualizaDetalleVenta();
                         panelAsientos.setVisible(false);
                         cantAdulto.setEnabled(true);                        
                         cantNino.setEnabled(true);
@@ -1295,23 +1298,26 @@ public class Launcher extends javax.swing.JFrame{
     Actualiza la tabla T_DetalleVenta
     */
         try{
-            String renglon[][] = {};
-            String columna[] = {"id_detalleVenta", "id_venta", "id_proyeccion", "tipo_boleto", "asiento", "subtotal"};
-            String query = "SELECT * FROM Ventas.T_DetalleVenta";
-            model = new DefaultTableModel(renglon,columna);
-            jTableDetalleVenta.setModel(model);
-            rs = st.executeQuery(query);
-            Object tuplas[] = new Object[6];
-            while(rs.next())
+            if(selectProyec != -1)
             {
-                tuplas[0] = rs.getObject("id_detalleVenta");
-                tuplas[1] = rs.getObject("id_venta");
-                tuplas[2] = rs.getObject("id_proyeccion");
-                tuplas[3] = rs.getObject("tipo_boleto");
-                tuplas[4] = rs.getObject("asiento");
-                tuplas[5] = rs.getObject("subtotal");
-                model.addRow(tuplas);
-                System.out.println(model.getRowCount());
+                String renglon[][] = {};
+                String columna[] = {"id_detalleVenta", "id_venta", "id_proyeccion", "tipo_boleto", "asiento", "subtotal"};
+                String query = "SELECT * FROM Ventas.T_DetalleVenta WHERE id_Proyeccion = " + selectProyec;
+                model = new DefaultTableModel(renglon,columna);
+                jTableDetalleVenta.setModel(model);
+                rs = st.executeQuery(query);
+                Object tuplas[] = new Object[6];
+                while(rs.next())
+                {
+                    tuplas[0] = rs.getObject("id_detalleVenta");
+                    tuplas[1] = rs.getObject("id_venta");
+                    tuplas[2] = rs.getObject("id_proyeccion");
+                    tuplas[3] = rs.getObject("tipo_boleto");
+                    tuplas[4] = rs.getObject("asiento");
+                    tuplas[5] = rs.getObject("subtotal");
+                    model.addRow(tuplas);
+                    System.out.println(model.getRowCount());
+                }
             }
             
         }catch(Exception e){
@@ -1421,6 +1427,51 @@ public class Launcher extends javax.swing.JFrame{
         
     }
     
+    public void deshabilitarAsientos()
+    {
+        s1.setEnabled(false);
+        s2.setEnabled(false);
+        s3.setEnabled(false);
+        s4.setEnabled(false);
+        s5.setEnabled(false);
+        s6.setEnabled(false);
+        s7.setEnabled(false);
+        s8.setEnabled(false);
+        s9.setEnabled(false);
+        s10.setEnabled(false);
+         s11.setEnabled(false);
+        s12.setEnabled(false);
+        s13.setEnabled(false);
+        s14.setEnabled(false);
+        s15.setEnabled(false);
+        s16.setEnabled(false);
+        s17.setEnabled(false);
+        s18.setEnabled(false);
+        s19.setEnabled(false);
+        s20.setEnabled(false);
+         s21.setEnabled(false);
+        s22.setEnabled(false);
+        s23.setEnabled(false);
+        s24.setEnabled(false);
+        s25.setEnabled(false);
+        s26.setEnabled(false);
+        s27.setEnabled(false);
+        s28.setEnabled(false);
+        s29.setEnabled(false);
+        s30.setEnabled(false);
+         s31.setEnabled(false);
+        s32.setEnabled(false);
+        s33.setEnabled(false);
+        s34.setEnabled(false);
+        s35.setEnabled(false);
+        s36.setEnabled(false);
+        s37.setEnabled(false);
+        s38.setEnabled(false);
+        s39.setEnabled(false);
+        s40.setEnabled(false);
+        
+            
+    }
     private void jButtonInsertaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaFilmActionPerformed
         /*
         *Inserta tupla en la tabla Film
@@ -1802,7 +1853,7 @@ public class Launcher extends javax.swing.JFrame{
            estadoAsientos(false);
         else
         {
-            estadoAsientos(true);
+            deshabilitarAsientos();
             Iterator<JCheckBox> asiento = boletosSelect.iterator();
             while(asiento.hasNext()){
                 JCheckBox JCB = asiento.next();
