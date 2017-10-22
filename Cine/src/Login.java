@@ -38,7 +38,7 @@ public class Login extends javax.swing.JFrame {
             
         }catch(Exception e)
         {
-            JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña", "Usuario", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Nombre de usuario o contraseña invalida", "Usuario", JOptionPane.ERROR_MESSAGE);
             return false;      
         }
         return false;

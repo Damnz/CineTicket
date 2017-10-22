@@ -1,6 +1,6 @@
--- Database: Cinema
+﻿-- Database: Cinema
 
--- DROP DATABASE "Cinema";
+--DROP DATABASE "Cinema";
 
 CREATE DATABASE "Cinema"
     WITH 

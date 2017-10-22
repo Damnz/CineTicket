@@ -61,6 +61,7 @@ public class Launcher extends javax.swing.JFrame{
                         ((Integer)cantNino.getValue() * precioNino) +
                         ((Integer)cantEspecial.getValue() * (precioAdulto * porcDescuento));
         totalVenta.setText(String.valueOf(totalVen));
+        estadoAsientos(false);
       }
     };
     
@@ -87,25 +88,8 @@ public class Launcher extends javax.swing.JFrame{
         jTabbedPane1.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
             //System.out.println(""+jTabbedPane1.getSelectedIndex());
-            if(jTabbedPane1.getSelectedIndex()==4) //Index starts at 0, so Index 2 = Tab3
-            {
-                try{     
-                    st=cn.createStatement();
-                    st.executeQuery("SELECT id_film FROM Funciones.T_Film ORDER BY id_film");
-                    rs = st.getResultSet();
-                    jComboBoxNombreHorario.removeAllItems();
-                    while(rs.next()){
-                       String c = rs.getString("id_film");
-                       jComboBoxNombreHorario.addItem(c);
-                    }
-                }catch(Exception err){
-                    System.out.println(err);
-                }
-            }
             if(jTabbedPane1.getSelectedIndex() == 1)
-            {
                 actualizaComboProyecciones();
-            }
             if(jTabbedPane1.getSelectedIndex()==2) //Index starts at 0, so Index 2 = Tab3
             {
                 try{     
@@ -128,6 +112,27 @@ public class Launcher extends javax.swing.JFrame{
                     System.out.println(err);
                 }
             }
+            if(jTabbedPane1.getSelectedIndex() == 3)
+                actualizaProyeccion();
+            if(jTabbedPane1.getSelectedIndex()==4) //Index starts at 0, so Index 2 = Tab3
+            {
+                try{     
+                    st=cn.createStatement();
+                    st.executeQuery("SELECT id_film FROM Funciones.T_Film ORDER BY id_film");
+                    rs = st.getResultSet();
+                    jComboBoxNombreHorario.removeAllItems();
+                    while(rs.next()){
+                       String c = rs.getString("id_film");
+                       jComboBoxNombreHorario.addItem(c);
+                    }
+                }catch(Exception err){
+                    System.out.println(err);
+                }
+            }            
+            if(jTabbedPane1.getSelectedIndex() == 5)
+                actualizaFilm();
+            if(jTabbedPane1.getSelectedIndex() == 6)
+                actualizaHorario();
         }
         });
     }
@@ -227,16 +232,6 @@ public class Launcher extends javax.swing.JFrame{
         jButtonInsertaProyeccion = new javax.swing.JButton();
         jButtonModificaProyeccion = new javax.swing.JButton();
         jButtonEliminaProyeccion = new javax.swing.JButton();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextFieldNombreFilm = new javax.swing.JTextField();
-        jTextFieldDuracionFilm = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTableFilm = new javax.swing.JTable();
-        jButtonInsertaFilm = new javax.swing.JButton();
-        jButtonModificaFilm = new javax.swing.JButton();
-        jButtonEliminaFilm = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -249,6 +244,16 @@ public class Launcher extends javax.swing.JFrame{
         jButtonInsertarSala = new javax.swing.JButton();
         jButtonModificarSala = new javax.swing.JButton();
         jButtonEliminarSala = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextFieldNombreFilm = new javax.swing.JTextField();
+        jTextFieldDuracionFilm = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableFilm = new javax.swing.JTable();
+        jButtonInsertaFilm = new javax.swing.JButton();
+        jButtonModificaFilm = new javax.swing.JButton();
+        jButtonEliminaFilm = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -332,7 +337,7 @@ public class Launcher extends javax.swing.JFrame{
             .addGap(0, 250, Short.MAX_VALUE)
         );
 
-        jPanel1.add(panelAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 260, 250));
+        jPanel1.add(panelAsientos, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 20, 260, 250));
 
         s1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -819,94 +824,6 @@ public class Launcher extends javax.swing.JFrame{
 
         jTabbedPane1.addTab("Proyección", jPanel3);
 
-        jLabel1.setText("Nombre:");
-
-        jLabel2.setText("Duración:");
-
-        jTableFilm.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jTableFilm.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableFilmMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jTableFilm);
-
-        jButtonInsertaFilm.setText("Insertar");
-        jButtonInsertaFilm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonInsertaFilmActionPerformed(evt);
-            }
-        });
-
-        jButtonModificaFilm.setText("Modificar");
-        jButtonModificaFilm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonModificaFilmActionPerformed(evt);
-            }
-        });
-
-        jButtonEliminaFilm.setText("Eliminar");
-        jButtonEliminaFilm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEliminaFilmActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                            .addComponent(jTextFieldNombreFilm))
-                        .addGap(31, 31, 31)
-                        .addComponent(jButtonInsertaFilm)
-                        .addGap(45, 45, 45)
-                        .addComponent(jButtonModificaFilm)
-                        .addGap(45, 45, 45)
-                        .addComponent(jButtonEliminaFilm)))
-                .addGap(117, 117, 117))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextFieldNombreFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonInsertaFilm)
-                    .addComponent(jButtonModificaFilm)
-                    .addComponent(jButtonEliminaFilm))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(99, 99, 99))
-        );
-
-        jTabbedPane1.addTab("Film", jPanel5);
-
         jLabel3.setText("N° de Sala:");
 
         jLabel4.setText("Cupo:");
@@ -1009,6 +926,94 @@ public class Launcher extends javax.swing.JFrame{
         );
 
         jTabbedPane1.addTab("Sala", jPanel4);
+
+        jLabel1.setText("Nombre:");
+
+        jLabel2.setText("Duración:");
+
+        jTableFilm.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableFilm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableFilmMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableFilm);
+
+        jButtonInsertaFilm.setText("Insertar");
+        jButtonInsertaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInsertaFilmActionPerformed(evt);
+            }
+        });
+
+        jButtonModificaFilm.setText("Modificar");
+        jButtonModificaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModificaFilmActionPerformed(evt);
+            }
+        });
+
+        jButtonEliminaFilm.setText("Eliminar");
+        jButtonEliminaFilm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminaFilmActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGap(67, 67, 67)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNombreFilm))
+                        .addGap(31, 31, 31)
+                        .addComponent(jButtonInsertaFilm)
+                        .addGap(45, 45, 45)
+                        .addComponent(jButtonModificaFilm)
+                        .addGap(45, 45, 45)
+                        .addComponent(jButtonEliminaFilm)))
+                .addGap(117, 117, 117))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextFieldNombreFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonInsertaFilm)
+                    .addComponent(jButtonModificaFilm)
+                    .addComponent(jButtonEliminaFilm))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextFieldDuracionFilm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(99, 99, 99))
+        );
+
+        jTabbedPane1.addTab("Film", jPanel5);
 
         jPanel6.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -1134,6 +1139,7 @@ public class Launcher extends javax.swing.JFrame{
     private void actualizaComboProyecciones()
     {
         try{   
+            
             proyecciones.removeItemListener(proyecciones.getItemListeners()[0]);
             proyecciones.removeAllItems();
             proyecciones.addItem("- Seleccionar -");
@@ -1144,7 +1150,7 @@ public class Launcher extends javax.swing.JFrame{
                String proyeccion = rs.getString("id_proyeccion") +" - "+ rs.getString("nombre_film") + " - " + rs.getString("hora") + ", " + rs.getString("fecha");
                proyecciones.addItem(proyeccion);
             }
-            
+
             proyecciones.addItemListener(new java.awt.event.ItemListener() {
                 public void itemStateChanged(java.awt.event.ItemEvent evt) {
                     String strAux = String.valueOf(proyecciones.getSelectedItem());
@@ -1172,13 +1178,14 @@ public class Launcher extends javax.swing.JFrame{
                     {
                         selectProyec =  Integer.valueOf(strAux.substring(0, strAux.indexOf("-") - 1));
                         actualizaAsientosDisponibles(selectProyec);
+                        if(cantBoletos == 0)
+                            deshabilitarAsientos();
                         actualizaDetalleVenta();
                         panelAsientos.setVisible(false);
                         cantAdulto.setEnabled(true);                        
                         cantNino.setEnabled(true);
                         cantEspecial.setEnabled(true);
                         aceptar.setEnabled(true);
-
                     } 
                 }
             });
@@ -1377,7 +1384,7 @@ public class Launcher extends javax.swing.JFrame{
             rs = st.getResultSet();
             while(rs.next()){
                String asiento = rs.getString("asiento");
-               asientos[Integer.valueOf(asiento)] = true;
+               asientos[Integer.valueOf(asiento)-1] = true;
             }
         }catch(Exception err){
             System.out.println(err);
@@ -1427,8 +1434,7 @@ public class Launcher extends javax.swing.JFrame{
         
     }
     
-    public void deshabilitarAsientos()
-    {
+    public void deshabilitarAsientos(){
         s1.setEnabled(false);
         s2.setEnabled(false);
         s3.setEnabled(false);
@@ -1472,6 +1478,7 @@ public class Launcher extends javax.swing.JFrame{
         
             
     }
+    
     private void jButtonInsertaFilmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInsertaFilmActionPerformed
         /*
         *Inserta tupla en la tabla Film
@@ -1803,7 +1810,6 @@ public class Launcher extends javax.swing.JFrame{
                idVenta = Integer.valueOf(id_venta);
             }
         }catch(Exception ex){}  
-        
         Iterator<Integer> asiento = asientosSelect.iterator();
         while(asiento.hasNext()){
             for(int i = 0; i < (Integer)cantAdulto.getValue(); i++)
@@ -1839,7 +1845,10 @@ public class Launcher extends javax.swing.JFrame{
         }
         actualizaDetalleVenta();
         actualizaVenta();
+        JOptionPane.showMessageDialog(null, "Venta realizada con exito", "Usuario", JOptionPane.INFORMATION_MESSAGE);
+
         proyecciones.setSelectedIndex(0);
+        
     }//GEN-LAST:event_aceptarActionPerformed
 
     private void selectAsiento(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAsiento
@@ -1949,8 +1958,7 @@ public class Launcher extends javax.swing.JFrame{
         
     }//GEN-LAST:event_selectAsiento
     
-    public void estadoAsientos(boolean activo)
-    {
+    public void estadoAsientos(boolean activo){
         if(activo)
         {
             s1.setEnabled(asientos[0]);
