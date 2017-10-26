@@ -114,3 +114,78 @@ CREATE TRIGGER revisaCupo
 AFTER INSERT ON VENTAS.T_DetalleVenta
 FOR EACH ROW
 EXECUTE PROCEDURE revisaCupo();
+
+
+--Checa tipo de boleto
+alter table ventas.t_detalleventa add constraint checaBoleto check(tipo_boleto= 'Niño' or tipo_boleto= 'Especial' or tipo_boleto= 'Adulto');
+--Checa tipo de sala
+alter table funciones.t_sala add constraint checaSala check(tipo_sala= '3D' or tipo_sala= '4D' or tipo_sala= 'Normal');
+
+
+--Al realizar una venta,si el cliente es especial, hacer el descuento correspondiente
+CREATE OR REPLACE FUNCTION aplicaDescuento()
+RETURNS TRIGGER AS $aplicaDescuento$
+DECLARE
+BEGIN 
+	IF ((SELECT tipo_boleto FROM Ventas.T_DetalleVenta
+	    WHERE ventas.T_DetalleVenta.id_detalleVenta= NEW.id_DetalleVenta) ='Especial')
+	    THEN
+		UPDATE Ventas.T_DetalleVenta SET subtotal= subtotal*.7
+		 WHERE Ventas.T_DetalleVenta.id_DetalleVenta= NEW.id_DetalleVenta;
+		raise notice 'Se aplico el descuento!!';
+		return NEW;
+	ELSE
+		return NEW;
+	END IF;
+END;
+$aplicaDescuento$ LANGUAGE plpgsql;
+
+CREATE TRIGGER aplicaDescuento
+AFTER INSERT ON VENTAS.T_DetalleVenta
+FOR EACH ROW
+EXECUTE PROCEDURE aplicaDescuento();
+
+
+--Al generar un detalle de venta, actualizar el total e iva
+CREATE OR REPLACE FUNCTION actualizaTotal()
+RETURNS TRIGGER AS $actualizaTotal$
+DECLARE
+BEGIN
+	UPDATE Ventas.T_Venta SET total = total + NEW.subtotal, iva = iva + (NEW.subtotal * .16)
+	WHERE Ventas.T_Venta.id_venta = NEW.id_venta;
+	
+	UPDATE Ventas.T_Venta SET total = total + (NEW.subtotal * .16)
+	WHERE Ventas.T_Venta.id_venta = NEW.id_venta;
+	return NEW;
+END
+$actualizaTotal$ LANGUAGE plpgsql;
+
+CREATE TRIGGER actualizaTotal
+AFTER INSERT ON VENTAS.T_DetalleVenta
+FOR EACH ROW
+EXECUTE PROCEDURE actualizaTotal();
+
+ -- DROP TRIGGER actualizaTotal ON Ventas.T_DetalleVenta
+ -- DROP TRIGGER aplicaDescuento ON Ventas.T_DetalleVenta
+
+
+
+CREATE ROLE cajero LOGIN PASSWORD '123';
+GRANT USAGE ON SCHEMA Funciones TO cajero;
+GRANT USAGE ON SCHEMA Ventas TO cajero;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES  IN SCHEMA Ventas TO cajero;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES  IN SCHEMA Funciones TO cajero;
+GRANT ALL PRIVILEGES ON TABLE Ventas.T_Venta TO cajero;
+GRANT ALL PRIVILEGES ON TABLE Ventas.T_DetalleVenta TO cajero;
+GRANT SELECT ON TABLE Funciones.T_Proyeccion TO cajero;
+GRANT SELECT ON TABLE funciones.t_film to cajero;
+GRANT SELECT ON TABLE funciones.t_horario to cajero;
+GRANT SELECT ON TABLE funciones.t_sala to cajero;
+
+
+
+
+
+
+ 
+

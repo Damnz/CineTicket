@@ -38,13 +38,11 @@ public class Launcher extends javax.swing.JFrame{
     private Statement st=null;
     final String user;
     final String pass;
-    
     	
-    ArrayList<JCheckBox> boletosSelect = new ArrayList<JCheckBox>();
-    ArrayList<Integer> asientosSelect = new ArrayList<Integer>();
+    ArrayList<JCheckBox> boletosSelect = new ArrayList<>();
+    ArrayList<Integer> asientosSelect = new ArrayList<>();
     private int cantBoletos = 0;
     private double totalVen = 0.00;
-    
     
     final double precioAdulto = 60;
     final double precioNino = 40;
@@ -64,13 +62,12 @@ public class Launcher extends javax.swing.JFrame{
         estadoAsientos(false);
       }
     };
-    
     public Launcher(String user, String pass) {
         initComponents();
         cantAdulto.addChangeListener(listenerSpinner);
         cantNino.addChangeListener(listenerSpinner);
         cantEspecial.addChangeListener(listenerSpinner);
-       
+
         this.user = user;
         this.pass = pass;
         conexion();
@@ -81,7 +78,6 @@ public class Launcher extends javax.swing.JFrame{
         actualizaDetalleVenta();
         actualizaVenta();
         actualizaComboProyecciones();   
-        
         /*
             Detecta un cambio de pestaña y ejecuta una accion
         */
@@ -1135,7 +1131,7 @@ public class Launcher extends javax.swing.JFrame{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void actualizaComboProyecciones()
     {
         try{   
@@ -1192,8 +1188,8 @@ public class Launcher extends javax.swing.JFrame{
         }catch(Exception err){
             System.out.println(err);
         }
-    }
-    
+    }    
+   
     private void actualizaFilm(){
         /*
         Actualiza la tabla
@@ -1218,7 +1214,7 @@ public class Launcher extends javax.swing.JFrame{
             System.out.println("Error al cargar los datos");
         }
     }
-    
+   
     private void actualizaSala(){
         /*
         Actualiza la tabla
@@ -1837,7 +1833,7 @@ public class Launcher extends javax.swing.JFrame{
                 try
                 {                  
                     st=cn.createStatement();
-                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Especial', " + asiento.next() + ","+ precioAdulto * porcDescuento +")";
+                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Especial', " + asiento.next() + ","+ precioAdulto  +")";
                     st.executeUpdate(query);
                     
                 }catch(Exception ex){ }
@@ -1845,7 +1841,7 @@ public class Launcher extends javax.swing.JFrame{
         }
         actualizaDetalleVenta();
         actualizaVenta();
-        JOptionPane.showMessageDialog(null, "Venta realizada con exito", "Usuario", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Venta realizada con exito", "Ventas", JOptionPane.INFORMATION_MESSAGE);
 
         proyecciones.setSelectedIndex(0);
         
@@ -1957,7 +1953,7 @@ public class Launcher extends javax.swing.JFrame{
         
         
     }//GEN-LAST:event_selectAsiento
-    
+  
     public void estadoAsientos(boolean activo){
         if(activo)
         {
