@@ -168,19 +168,24 @@ EXECUTE PROCEDURE actualizaTotal();
  -- DROP TRIGGER actualizaTotal ON Ventas.T_DetalleVenta
  -- DROP TRIGGER aplicaDescuento ON Ventas.T_DetalleVenta
 
+CREATE ROLE programador LOGIN PASSWORD '123';
+GRANT ALL PRIVILEGES ON SCHEMA Funciones TO programador;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA Funciones TO programador;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA Funciones TO programador;
 
 
 CREATE ROLE cajero LOGIN PASSWORD '123';
-GRANT USAGE ON SCHEMA Funciones TO cajero;
-GRANT USAGE ON SCHEMA Ventas TO cajero;
+GRANT ALL PRIVILEGES ON SCHEMA Funciones TO cajero;
+GRANT ALL PRIVILEGES ON SCHEMA Ventas TO cajero;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES  IN SCHEMA Ventas TO cajero;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES  IN SCHEMA Funciones TO cajero;
 GRANT ALL PRIVILEGES ON TABLE Ventas.T_Venta TO cajero;
 GRANT ALL PRIVILEGES ON TABLE Ventas.T_DetalleVenta TO cajero;
-GRANT SELECT ON TABLE Funciones.T_Proyeccion TO cajero;
-GRANT SELECT ON TABLE funciones.t_film to cajero;
-GRANT SELECT ON TABLE funciones.t_horario to cajero;
-GRANT SELECT ON TABLE funciones.t_sala to cajero;
+GRANT ALL PRIVILEGES ON TABLE Funciones.T_Proyeccion TO cajero;
+GRANT SELECT, REFERENCES ON TABLE funciones.t_film to cajero;
+GRANT SELECT, REFERENCES ON TABLE funciones.t_horario to cajero;
+GRANT SELECT, REFERENCES ON TABLE funciones.t_sala to cajero;
+
 
 
 

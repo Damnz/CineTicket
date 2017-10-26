@@ -70,6 +70,8 @@ public class Launcher extends javax.swing.JFrame{
 
         this.user = user;
         this.pass = pass;
+        validaUsuario();
+        
         conexion();
         actualizaFilm();
         actualizaSala();
@@ -78,6 +80,8 @@ public class Launcher extends javax.swing.JFrame{
         actualizaDetalleVenta();
         actualizaVenta();
         actualizaComboProyecciones();   
+        if(user.equals("programador"))
+            jTabbedPane1.setSelectedIndex(2);
         /*
             Detecta un cambio de pestaña y ejecuta una accion
         */
@@ -1131,7 +1135,24 @@ public class Launcher extends javax.swing.JFrame{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+     private void validaUsuario()
+    {
+        if(user.equals( "cajero"))
+        {
+            jTabbedPane1.setEnabledAt(2, false);
+            jTabbedPane1.setEnabledAt(3, false);
+            jTabbedPane1.setEnabledAt(4, false);
+            jTabbedPane1.setEnabledAt(5, false);
+        }
+        else if(user.equals("programador"))
+        {
+            jTabbedPane1.setEnabledAt(0, false);
+            jTabbedPane1.setEnabledAt(1, false);
+            
+        }
+    }
+     
     private void actualizaComboProyecciones()
     {
         try{   
