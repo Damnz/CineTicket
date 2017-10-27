@@ -3,7 +3,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,17 +87,17 @@ public class Launcher extends javax.swing.JFrame{
         jTabbedPane1.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
             //System.out.println(""+jTabbedPane1.getSelectedIndex());
-            if(jTabbedPane1.getSelectedIndex() == 1)
+            if(jTabbedPane1.getSelectedIndex() == 1)    //Venta
                 actualizaComboProyecciones();
-            if(jTabbedPane1.getSelectedIndex()==2) //Index starts at 0, so Index 2 = Tab3
+            if(jTabbedPane1.getSelectedIndex()==2) //Proyeccion
             {
                 try{     
                     st=cn.createStatement();
-                    st.executeQuery("SELECT id_sala FROM Funciones.T_Sala ORDER BY id_sala");
+                    st.executeQuery("SELECT num_sala FROM Funciones.T_Sala;");
                     rs = st.getResultSet();
                     jComboBoxNumeroProyeccion.removeAllItems();
                     while(rs.next()){
-                       String c = rs.getString("id_sala");
+                       String c = rs.getString("num_sala");
                        jComboBoxNumeroProyeccion.addItem(c);
                     }
                     st.executeQuery("SELECT id_horario FROM Funciones.T_Horario ORDER BY id_horario");
@@ -112,27 +111,32 @@ public class Launcher extends javax.swing.JFrame{
                     System.out.println(err);
                 }
             }
-            if(jTabbedPane1.getSelectedIndex() == 3)
+            if(jTabbedPane1.getSelectedIndex() == 3)    //Sala
                 actualizaProyeccion();
-            if(jTabbedPane1.getSelectedIndex()==4) //Index starts at 0, so Index 2 = Tab3
+            if(jTabbedPane1.getSelectedIndex()==4) //Film
             {
-                try{     
+                actualizaFilm();               
+            }            
+            if(jTabbedPane1.getSelectedIndex() == 5)//Horario
+            {
+             actualizaHorario();
+             try{     
                     st=cn.createStatement();
-                    st.executeQuery("SELECT id_film FROM Funciones.T_Film ORDER BY id_film");
+                    st.executeQuery("SELECT nombre_film FROM Funciones.T_Film");
                     rs = st.getResultSet();
                     jComboBoxNombreHorario.removeAllItems();
                     while(rs.next()){
-                       String c = rs.getString("id_film");
+                       String c = rs.getString("nombre_film");
                        jComboBoxNombreHorario.addItem(c);
                     }
                 }catch(Exception err){
                     System.out.println(err);
                 }
-            }            
-            if(jTabbedPane1.getSelectedIndex() == 5)
-                actualizaFilm();
-            if(jTabbedPane1.getSelectedIndex() == 6)
-                actualizaHorario();
+            }
+                
+                
+            //if(jTabbedPane1.getSelectedIndex() == 5)
+             
         }
         });
     }
@@ -1254,8 +1258,7 @@ public class Launcher extends javax.swing.JFrame{
                 tuplas[1] = rs.getObject("num_sala");
                 tuplas[2] = rs.getObject("capacidad");
                 tuplas[3] = rs.getObject("tipo_sala");
-                model.addRow(tuplas);
-                System.out.println(model.getRowCount());
+                model.addRow(tuplas);               
             }
             
         }catch(Exception e){
@@ -1517,7 +1520,7 @@ public class Launcher extends javax.swing.JFrame{
             String exc = "ERROR: llave duplicada viola restricción de unicidad «unico_film»";
             final String ss = ex.getMessage();
             if(ss.contains(exc)){
-                JOptionPane.showMessageDialog(null, "El número de sala ya existe");  
+                JOptionPane.showMessageDialog(null, "La película ya existe");  
             }
             System.out.println(ss);
         }
@@ -1656,8 +1659,21 @@ public class Launcher extends javax.swing.JFrame{
     }//GEN-LAST:event_jButtonEliminarSalaActionPerformed
 
     private void jTableHorarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableHorarioMouseClicked
+        try{
+            st=cn.createStatement();
+        int id_film = Integer.parseInt(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 1).toString());
+        String select = "SELECT nombre_film FROM Funciones.T_Film WHERE id_film=" + id_film + ";";
+        rs = st.executeQuery(select);
+        rs.next();
+        String nombre_film = rs.getString("nombre_film");
+        jComboBoxNombreHorario.setSelectedItem(nombre_film);
+        }
+        catch(Exception ex){
+           System.out.println(ex); 
+        }
+        
         jTextFieldHoraHorario.setText(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 2).toString());
-        jComboBoxNombreHorario.setSelectedItem(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 1).toString());
+        //jComboBoxNombreHorario.setSelectedItem(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 1).toString());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String fecha = sdf.format(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 3));
         java.util.Date date;
@@ -1684,9 +1700,17 @@ public class Launcher extends javax.swing.JFrame{
         try
         {
             st=cn.createStatement();
+            
+            String nombre_film = jComboBoxNombreHorario.getSelectedItem().toString();
+            String select = "SELECT id_film FROM Funciones.T_Film WHERE nombre_film='" + nombre_film + "';";
+            rs = st.executeQuery(select);
+            rs.next();
+            int id_film = Integer.parseInt(rs.getString("id_film"));
+            
+            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = sdf.format(jDateChooserHorario.getDate());
-            int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
+            //int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
             String hora = jTextFieldHoraHorario.getText();
             String query = "INSERT INTO Funciones.T_Horario(id_film, hora, fecha) VALUES("+ id_film + ",'" + hora + "','" + fecha +"')";
             st.executeUpdate(query);
@@ -1695,7 +1719,7 @@ public class Launcher extends javax.swing.JFrame{
             System.out.println("Tupla insertada correctamente");
         }catch(Exception e)
         {
-            System.out.println("Error al insertar");
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButtonInsertaHorarioActionPerformed
 
@@ -1707,9 +1731,16 @@ public class Launcher extends javax.swing.JFrame{
         {
             int id_horario = Integer.parseInt(jTableHorario.getValueAt(jTableHorario.getSelectedRow(), 0).toString());
             st=cn.createStatement();
+            
+            String nombre_film  = jComboBoxNombreHorario.getSelectedItem().toString();
+            String select = "SELECT id_film FROM Funciones.T_Film WHERE nombre_film='" + nombre_film + "';";
+            rs = st.executeQuery(select);
+            rs.next();
+            int id_film = Integer.parseInt(rs.getString("id_film"));
+            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = sdf.format(jDateChooserHorario.getDate());
-            int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
+            //int id_film = Integer.parseInt(jComboBoxNombreHorario.getSelectedItem().toString());
             String hora = jTextFieldHoraHorario.getText();
             String query = "UPDATE Funciones.T_Horario SET id_film="+ id_film + ",hora='" + hora + "',fecha='" + fecha +"' WHERE id_horario=" + id_horario;
             st.executeUpdate(query);
@@ -1737,7 +1768,7 @@ public class Launcher extends javax.swing.JFrame{
             System.out.println("Tupla eliminada correctamente");
         }catch(Exception e)
         {
-            System.out.println("Error al eliminar");
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButtonEliminaHorarioActionPerformed
 
@@ -1748,21 +1779,35 @@ public class Launcher extends javax.swing.JFrame{
         try
         {
             st=cn.createStatement();
-            int id_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
+            int num_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
             int id_horario = Integer.parseInt(jComboBoxHorarioProyeccion.getSelectedItem().toString());
+            String select = "SELECT id_sala FROM Funciones.T_Sala WHERE num_sala=" + num_sala + ";";
+            rs = st.executeQuery(select);
+            rs.next();
+            int id_sala = Integer.parseInt(rs.getString("id_sala"));
             String query = "INSERT INTO Funciones.T_Proyeccion(id_sala, id_horario, asientos_disponibles) VALUES("+ id_sala + "," + id_horario + "," + 40 +")";
             st.executeUpdate(query);
             actualizaProyeccion();
             System.out.println("Tupla insertada correctamente");
         }catch(Exception e)
         {
-            System.out.println("Error al insertar");
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButtonInsertaProyeccionActionPerformed
 
     private void jTableProyeccionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProyeccionMouseClicked
-        jComboBoxNumeroProyeccion.setSelectedItem(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 1).toString());
-        jComboBoxHorarioProyeccion.setSelectedItem(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 2).toString());
+        try{
+            st=cn.createStatement();
+            int id_sala = Integer.parseInt(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 1).toString());
+            String select = "SELECT num_sala FROM Funciones.T_Sala WHERE id_sala=" + id_sala + ";";
+            rs = st.executeQuery(select);
+            rs.next();
+            String num_sala = rs.getString("num_sala");
+            jComboBoxNumeroProyeccion.setSelectedItem(num_sala);
+            jComboBoxHorarioProyeccion.setSelectedItem(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 2).toString());   
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }//GEN-LAST:event_jTableProyeccionMouseClicked
 
     private void jButtonModificaProyeccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModificaProyeccionActionPerformed
@@ -1772,7 +1817,11 @@ public class Launcher extends javax.swing.JFrame{
         try
         {
             st=cn.createStatement();
-            int id_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
+            int num_sala = Integer.parseInt(jComboBoxNumeroProyeccion.getSelectedItem().toString());
+            String select = "SELECT id_sala FROM Funciones.T_Sala WHERE num_sala=" + num_sala + ";";
+            rs = st.executeQuery(select);
+            rs.next();
+            int id_sala = Integer.parseInt(rs.getString("id_sala"));
             int id_horario = Integer.parseInt(jComboBoxHorarioProyeccion.getSelectedItem().toString());
             int asientos_disponibles = Integer.parseInt(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 3).toString());
             int id_proyeccion = Integer.parseInt(jTableProyeccion.getValueAt(jTableProyeccion.getSelectedRow(), 0).toString());
