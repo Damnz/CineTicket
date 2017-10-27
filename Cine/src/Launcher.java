@@ -1876,9 +1876,13 @@ public class Launcher extends javax.swing.JFrame{
             boletosSelect.remove(box);
         
         if(boletosSelect.size() < cantBoletos)
+        {
            estadoAsientos(false);
+           aceptar.setEnabled(false);
+        }
         else
         {
+            aceptar.setEnabled(true);
             deshabilitarAsientos();
             Iterator<JCheckBox> asiento = boletosSelect.iterator();
             while(asiento.hasNext()){
