@@ -1520,7 +1520,7 @@ public class Launcher extends javax.swing.JFrame{
             String exc = "ERROR: llave duplicada viola restricción de unicidad «unico_film»";
             final String ss = ex.getMessage();
             if(ss.contains(exc)){
-                JOptionPane.showMessageDialog(null, "El número de sala ya existe");  
+                JOptionPane.showMessageDialog(null, "La película ya existe");  
             }
             System.out.println(ss);
         }
