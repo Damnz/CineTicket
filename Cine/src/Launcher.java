@@ -80,7 +80,7 @@ public class Launcher extends javax.swing.JFrame{
         actualizaVenta();
         actualizaComboProyecciones();   
         if(user.equals("programador"))
-            jTabbedPane1.setSelectedIndex(2);
+            jTabbedPane1.setSelectedIndex(4);
         /*
             Detecta un cambio de pestaña y ejecuta una accion
         */
@@ -1206,7 +1206,7 @@ public class Launcher extends javax.swing.JFrame{
                         cantAdulto.setEnabled(true);                        
                         cantNino.setEnabled(true);
                         cantEspecial.setEnabled(true);
-                        aceptar.setEnabled(true);
+                        aceptar.setEnabled(false);
                     } 
                 }
             });
@@ -1903,7 +1903,7 @@ public class Launcher extends javax.swing.JFrame{
                 try
                 {                  
                     st=cn.createStatement();
-                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Especial', " + asiento.next() + ","+ precioAdulto  +")";
+                    String query = "INSERT INTO Ventas.T_DetalleVenta(id_venta, id_proyeccion, tipo_boleto, asiento, subtotal) VALUES(" + idVenta + "," + selectProyec + ", 'Especial', " + asiento.next() + ","+ precioAdulto * porcDescuento  +")";
                     st.executeUpdate(query);
                     
                 }catch(Exception ex){ }
